@@ -8,14 +8,49 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 /* GLOBAL VARIABLES */
 //////////////////////
 
+var cameras = [];
+var camera;
+var scene;
+
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
-function createScene() {}
+function createScene() {
+    'use strict';
+
+    scene = new THREE.Scene();
+
+    scene.background = new THREE.Color('#ffffff');
+}
 
 //////////////////////
 /* CREATE CAMERA(S) */
 //////////////////////
+function createCameras() {
+    'use strict';
+    const camera_pos = new Array(new Array(100, 0, 0), // frontal
+                                new Array(0, 0, 100), // lateral
+                                new Array(0, 150, 0), // topo
+                                new Array(500, 500, 500)); // projeção perspetiva
+
+    for (let i = 0; i < 4; i++) {
+        if (i == 3) {
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+        } else {
+            camera = new THREE.OrthographicCamera(window.innerWidth / -5,
+                                            window.innerWidth / 5,
+                                            window.innerHeight / 5,
+                                            window.innerHeight / -5,
+                                            1,
+                                            1000);
+        }
+
+        camera.position.set(camera_pos[i][0], camera_pos[i][1], camera_pos[i][2]);
+        camera.lookAt(scene.position);
+        cameras.push(camera);
+    }
+    camera = cameras[0];
+}
 
 /////////////////////
 /* CREATE LIGHT(S) */
