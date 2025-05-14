@@ -13,6 +13,7 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
+var head, eye, ear, arm, pipe, forearm, body, abdomen, waist, thigh, leg, foot;
 
 var materials = new Map();
 
@@ -35,7 +36,7 @@ function createScene() {
 //////////////////////
 function createCameras() {
     'use strict';
-    
+
     const camera_pos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
                                 new Array(200, 0, 0), // proj. ortogonal - lateral
                                 new Array(0, 250, 0), // proj. ortogonal - topo
@@ -73,10 +74,22 @@ function createMaterials() {
     materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false}));
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false }));
     materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false }));
+    materials.set("head", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false }));
+    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
+    materials.set("ear", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
+    materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
+    materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
+    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
+    materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
+    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
+    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
+    materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
+    materials.set("leg", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
+    materials.set("foot", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
 }
 
 function createRobot() {
-
+    
 }
 
 function createTrailer(x, y, z) {
@@ -196,7 +209,6 @@ function onKeyDown(e) {
             break;
     }
 }
-
 
 ///////////////////////
 /* KEY UP CALLBACK */
