@@ -35,6 +35,7 @@ function createScene() {
 //////////////////////
 function createCameras() {
     'use strict';
+    
     const camera_pos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
                                 new Array(200, 0, 0), // proj. ortogonal - lateral
                                 new Array(0, 250, 0), // proj. ortogonal - topo
@@ -68,6 +69,7 @@ function createCameras() {
 ////////////////////////
 function createMaterials() {
     'use strict';
+
     materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false}));
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false }));
     materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false }));
@@ -138,7 +140,7 @@ function render() {
 ////////////////////////////////
 function init() {
     'use strict';
-    
+
     renderer = new THREE.WebGLRenderer({
         antialias: true,
     });
@@ -156,6 +158,8 @@ function init() {
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
+    'use strict';
+
     render();
     
     requestAnimationFrame(animate);
