@@ -9,8 +9,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 //////////////////////
 
 var cameras = [];
-var camera;
-var scene;
+var camera, scene, renderer;
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -28,10 +27,10 @@ function createScene() {
 //////////////////////
 function createCameras() {
     'use strict';
-    const camera_pos = new Array(new Array(100, 0, 0), // frontal
-                                new Array(0, 0, 100), // lateral
-                                new Array(0, 150, 0), // topo
-                                new Array(500, 500, 500)); // projeção perspetiva
+    const camera_pos = new Array(new Array(100, 0, 0), // proj. ortogonal - frontal
+                                new Array(0, 0, 100), // proj. ortogonal - lateral
+                                new Array(0, 150, 0), // proj. ortogonal - topo
+                                new Array(500, 500, 500)); // proj. perspetiva
 
     for (let i = 0; i < 4; i++) {
         if (i == 3) {
@@ -83,7 +82,18 @@ function render() {}
 ////////////////////////////////
 /* INITIALIZE ANIMATION CYCLE */
 ////////////////////////////////
-function init() {}
+function init() {
+    renderer = new THREE.WebGLRenderer({
+        antialias: true,
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    createScene();
+    createCameras();
+
+    window.addEventListener("keydown", onKeyDown);
+}
 
 /////////////////////
 /* ANIMATION CYCLE */
@@ -98,7 +108,25 @@ function onResize() {}
 ///////////////////////
 /* KEY DOWN CALLBACK */
 ///////////////////////
-function onKeyDown(e) {}
+function onKeyDown(e) {
+    'use strict';
+
+    switch (e.keyCode) {
+        case 49: //1
+            camera = cameras[0];
+            break;
+        case 50: //2
+            camera = cameras[1];
+            break;
+        case 51: //3
+            camera = cameras[2];
+            break;
+        case 52: //4
+            camera = cameras[3];
+            break;
+    }
+}
+
 
 ///////////////////////
 /* KEY UP CALLBACK */
