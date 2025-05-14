@@ -187,6 +187,7 @@ function onKeyDown(e) {
             materials.forEach((element) => {
                 element.wireframe = !element.wireframe;
             })
+            break;
     }
 }
 
