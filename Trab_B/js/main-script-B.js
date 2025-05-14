@@ -137,6 +137,8 @@ function render() {
 /* INITIALIZE ANIMATION CYCLE */
 ////////////////////////////////
 function init() {
+    'use strict';
+    
     renderer = new THREE.WebGLRenderer({
         antialias: true,
     });
