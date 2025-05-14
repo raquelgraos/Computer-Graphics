@@ -71,24 +71,24 @@ function createCameras() {
 function createMaterials() {
     'use strict';
 
-    materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false}));
-    materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false }));
-    materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false }));
-    materials.set("head", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false }));
-    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
-    materials.set("ear", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
-    materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
-    materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
-    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
-    materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false }));
-    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
-    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
-    materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false }));
-    materials.set("leg", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
-    materials.set("foot", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false }));
+    materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false})); // gray
+    materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
+    materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false })); // very very dark gray almost black
+    materials.set("head", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
+    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xffffff, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
+    materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false })); // white
+    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false })); // white
+    materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("leg", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
+    materials.set("foot", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
 }
 
-function createRobot() {
+function createRobot(x, y, z) {
     
 }
 
