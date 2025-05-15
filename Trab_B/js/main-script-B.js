@@ -13,15 +13,17 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
-var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, lowerLeg, upperLeg, foot;
+var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
+    forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, lowerLeg, upperLeg, foot;
 
 var materials = new Map();
+
+let leftKey = false, upKey = false, rightKey = false, downKey = false;
 
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
 function createScene() {
-    'use strict';
 
     scene = new THREE.Scene();
 
@@ -35,7 +37,6 @@ function createScene() {
 /* CREATE CAMERA(S) */
 //////////////////////
 function createCameras() {
-    'use strict';
 
     const cameraPos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
                                 new Array(200, 0, 0), // proj. ortogonal - lateral
@@ -58,18 +59,13 @@ function createCameras() {
         camera.lookAt(scene.position);
         cameras.push(camera);
     }
-    camera = cameras[0];
+    camera = cameras[0]; // default camera is Front
 }
-
-/////////////////////
-/* CREATE LIGHT(S) */
-/////////////////////
 
 ////////////////////////
 /* CREATE OBJECT3D(S) */
 ////////////////////////
 function createMaterials() {
-    'use strict';
 
     materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false})); // gray
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
@@ -89,7 +85,6 @@ function createMaterials() {
 }
 
 function createRobot(x, y, z) {
-    'use strict';
 
     waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 100), materials.get("waist")); // (0.04, 0.01, 0.03)
     waist.position.set(0, 0, 0);
@@ -138,7 +133,6 @@ function createRobot(x, y, z) {
 }
 
 function buildHead(obj) {
-    'use strict';
 
     // Head
     head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head")); // (0.02, 0.015, 0.03)
@@ -168,7 +162,6 @@ function buildHead(obj) {
 }
 
 function buildArm(obj, left) {
-    'use strict';
 
     // Arm
     arm = new THREE.Mesh(new THREE.BoxGeometry(30, 100, 40), materials.get("arm")); // (0.015, 0.035, 0.02)
@@ -185,58 +178,46 @@ function buildArm(obj, left) {
     // Pipe
     pipe = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 90), materials.get("pipe")); // radius top: 0.0025, radius bottom: 0.0025, height: 0.045
     if (left) { pipe.position.set(20, 25, -15); }
-    else pipe.position.set(-20, 25, -15)
+    else pipe.position.set(-20, 25, -15);
 
     obj.add(pipe);
 }
 
 function buildLeg(obj, left) {
-    'use strict';
-
-    /* Lower Leg */
 
     // Leg
     leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg")); // (0.015, 0.06, 0.01)
     leg.position.set(0, 0, 0);
 
-    // Foot
+    obj.add(leg);
+
+    // Foot 
     foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 20), materials.get("foot"));
     if (left) { foot.position.set(5, -50, 20); }
     else foot.position.set(-5, -50, 20);
 
-    lowerLeg = new THREE.Object3D();
-    lowerLeg.add(leg);
-    lowerLeg.add(foot);
-
     if (left) {
-        addWheel(lowerLeg, 15, -5, -5);
-        addWheel(lowerLeg, 15, -45, -5);
+        addWheel(obj, 15, -5, -5);
+        addWheel(obj, 15, -45, -5);
     } else {
-        addWheel(lowerLeg, -15, -5, -5);
-        addWheel(lowerLeg, -15, -45, -5);
+        addWheel(obj, -15, -5, -5);
+        addWheel(obj, -15, -45, -5);
     }
 
-    obj.add(lowerLeg);
-
-    /* Upper Leg */
-
+    obj.add(foot);
+    
     // Thigh
     thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh")); // (0.01, 0.025, 0.005)
     if (left) { thigh.position.set(-5, 85, -5); }
     else thigh.position.set(5, 85, -5);
 
-    upperLeg = new THREE.Object3D();
-    upperLeg.add(thigh);
+    if (left) addWheel(obj, 15, 95, -5);
+    else addWheel(obj, -15, 95, -5);
 
-    if (left) addWheel(upperLeg, 15, 95, -5);
-    else addWheel(upperLeg, -15, 95, -5);
-
-    obj.add(upperLeg);
-
+    obj.add(thigh);
 }
 
 function createTrailer(x, y, z) {
-    'use strict';
 
     box = new THREE.Mesh(new THREE.BoxGeometry(100, 140, 240), materials.get("trailer")); // (0.05, 0.07. 0.12) -> escala 2000:1
     box.position.set(0, 0, 0);
@@ -259,7 +240,6 @@ function createTrailer(x, y, z) {
 }
 
 function addWheel(obj, x, y, z) {
-    'use strict';
 
     wheel = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 20), materials.get("wheel")); // radious top: 0.0075, radius bottom: 0.0075, height: 0.01
     wheel.rotation.z = Math.PI / 2;
@@ -282,13 +262,33 @@ function handleCollisions() {}
 ////////////
 /* UPDATE */
 ////////////
-function update() {}
+function update() {
+
+}
+
+function handleTrailerMovements() {
+
+    movementVector.set(0, 0);
+    
+    if (leftKey) {
+        //TODO
+    } if (upKey) {
+        //TODO
+    } if (rightKey) {
+        //TODO
+    } if (downKey) {
+        //TODO
+    }
+}
+
+function handleRobotMovements() {
+
+}
 
 /////////////
 /* DISPLAY */
 /////////////
 function render() {
-    'use_strict';
     renderer.render(scene, camera);
 }
 
@@ -296,13 +296,14 @@ function render() {
 /* INITIALIZE ANIMATION CYCLE */
 ////////////////////////////////
 function init() {
-    'use strict';
 
     renderer = new THREE.WebGLRenderer({
         antialias: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
+    clock.start();
 
     createMaterials();
     createScene();
@@ -315,7 +316,8 @@ function init() {
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
-    'use strict';
+
+    update();
 
     render();
     
@@ -331,7 +333,6 @@ function onResize() {}
 /* KEY DOWN CALLBACK */
 ///////////////////////
 function onKeyDown(e) {
-    'use strict';
 
     switch (e.keyCode) {
         case 49: //1
@@ -350,6 +351,34 @@ function onKeyDown(e) {
             materials.forEach((element) => {
                 element.wireframe = !element.wireframe;
             })
+            break;
+        case 81: //Q
+            break;
+        case 65: //A
+            break;
+        case 87: //W
+            break;
+        case 83: //S
+            break;
+        case 69: //E
+            break;
+        case 68: //D
+            break;
+        case 82: //R
+            break;
+        case 70: //F
+            break;
+        case 37: // left arrow
+            leftKey = true;
+            break;
+        case 38: // up arrow
+            upKey = true;
+            break;
+        case 39: // right arrow
+            rightKey = true;
+            break;
+        case 40: // down arrow
+            downKey = true;
             break;
     }
 }
