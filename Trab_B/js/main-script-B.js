@@ -13,15 +13,23 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
-var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, lowerLeg, upperLeg, foot;
+var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
+    forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
 
-var materials = new Map();
+const materials = new Map();
+
+var movementVector = new THREE.Vector3(0, 0, 0)
+
+var clock = new THREE.Clock();
+
+let leftKey = false, upKey = false, rightKey = false, downKey = false;
+
+var delta;
 
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
 function createScene() {
-    'use strict';
 
     scene = new THREE.Scene();
 
@@ -35,7 +43,6 @@ function createScene() {
 /* CREATE CAMERA(S) */
 //////////////////////
 function createCameras() {
-    'use strict';
 
     const cameraPos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
                                 new Array(200, 0, 0), // proj. ortogonal - lateral
@@ -61,15 +68,10 @@ function createCameras() {
     camera = cameras[0];
 }
 
-/////////////////////
-/* CREATE LIGHT(S) */
-/////////////////////
-
 ////////////////////////
 /* CREATE OBJECT3D(S) */
 ////////////////////////
 function createMaterials() {
-    'use strict';
 
     materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false})); // gray
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
@@ -89,7 +91,6 @@ function createMaterials() {
 }
 
 function createRobot(x, y, z) {
-    'use strict';
 
     waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 60), materials.get("waist")); // (0.04, 0.01, 0.03)
     waist.position.set(0, 0, 0);
@@ -107,13 +108,8 @@ function createRobot(x, y, z) {
 
     totalHead = new THREE.Object3D();
     buildHead(totalHead);
-    // nota: é melhor construir a cabeça primeiro a partir das coordenadas 0 e 
-    // depois eleva la toda relativamente ao resto do robo (atual) ou ao contrario?
     totalHead.position.set(0,125,0);
     robot.add(totalHead);
-
-    /*addWheel(robot, );
-    addWheel(robot, );*/
 
     // Arms
     totalLArm = new THREE.Object3D();
@@ -143,7 +139,6 @@ function createRobot(x, y, z) {
 }
 
 function buildHead(obj) {
-    'use strict';
 
     // Head
     head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head")); // (0.02, 0.015, 0.03)
@@ -173,7 +168,6 @@ function buildHead(obj) {
 }
 
 function buildArm(obj, pos) {
-    'use strict';
 
     // Arm
     arm = new THREE.Mesh(new THREE.BoxGeometry(30, 100, 40), materials.get("arm")); // (0.015, 0.035, 0.02)
@@ -196,52 +190,41 @@ function buildArm(obj, pos) {
 }
 
 function buildLeg(obj, left) {
-    'use strict';
-
-    /* Lower Leg */
 
     // Leg
     leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg")); // (0.015, 0.06, 0.01)
     leg.position.set(0, 0, 0);
 
-    // Foot
+    obj.add(leg);
+
+    // Foot 
     foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 20), materials.get("foot"));
     if (left) { foot.position.set(5, -50, 20); }
     else foot.position.set(-5, -50, 20);
 
-    lowerLeg = new THREE.Object3D();
-    lowerLeg.add(leg);
-    lowerLeg.add(foot);
-
     if (left) {
-        addWheel(lowerLeg, 15, -5, -5);
-        addWheel(lowerLeg, 15, -45, -5);
+        addWheel(obj, 15, -5, -5);
+        addWheel(obj, 15, -45, -5);
     } else {
-        addWheel(lowerLeg, -15, -5, -5);
-        addWheel(lowerLeg, -15, -45, -5);
+        addWheel(obj, -15, -5, -5);
+        addWheel(obj, -15, -45, -5);
     }
 
-    obj.add(lowerLeg);
-
-    /* Upper Leg */
-
+    obj.add(foot);
+    
     // Thigh
     thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh")); // (0.01, 0.025, 0.005)
     if (left) { thigh.position.set(-5, 85, -5); }
     else thigh.position.set(5, 85, -5);
 
-    upperLeg = new THREE.Object3D();
-    upperLeg.add(thigh);
+    if (left) addWheel(obj, 15, 95, -5);
+    else addWheel(obj, -15, 95, -5);
 
-    if (left) addWheel(upperLeg, 15, 95, -5);
-    else addWheel(upperLeg, -15, 95, -5);
-
-    obj.add(upperLeg);
+    obj.add(thigh);
 
 }
 
 function createTrailer(x, y, z) {
-    'use strict';
 
     box = new THREE.Mesh(new THREE.BoxGeometry(100, 140, 240), materials.get("trailer")); // (0.05, 0.07. 0.12) -> escala 2000:1
     box.position.set(0, 0, 0);
@@ -264,7 +247,6 @@ function createTrailer(x, y, z) {
 }
 
 function addWheel(obj, x, y, z) {
-    'use strict';
 
     wheel = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 20), materials.get("wheel")); // radious top: 0.0075, radius bottom: 0.0075, height: 0.01
     wheel.rotation.z = Math.PI / 2;
@@ -287,13 +269,45 @@ function handleCollisions() {}
 ////////////
 /* UPDATE */
 ////////////
-function update() {}
+function update() {
+
+    delta = clock.getDelta();
+
+    handleTrailerMovements();
+
+    var newPositions = updateTrailerPositions(delta);
+    trailer.position.x = newPositions.x;
+    trailer.position.z = newPositions.z;
+}
+
+function handleTrailerMovements() {
+
+    movementVector.set(0, 0, 0);
+    
+    if (leftKey) {
+        movementVector.z += 100;
+    } if (upKey) {
+        movementVector.x -= 100;
+    } if (rightKey) {
+        movementVector.z -= 100;
+    } if (downKey) {
+        movementVector.x += 100;
+    }
+}
+
+function updateTrailerPositions(delta) {
+
+    var newPositionX = trailer.position.x + movementVector.x * delta;
+    var newPositionZ = trailer.position.z + movementVector.z * delta;
+
+    return new THREE.Vector3(newPositionX, 0, newPositionZ);
+
+}
 
 /////////////
 /* DISPLAY */
 /////////////
 function render() {
-    'use_strict';
     renderer.render(scene, camera);
 }
 
@@ -301,7 +315,6 @@ function render() {
 /* INITIALIZE ANIMATION CYCLE */
 ////////////////////////////////
 function init() {
-    'use strict';
 
     renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -309,18 +322,22 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    clock.start();
+
     createMaterials();
     createScene();
     createCameras();
 
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
 }
 
 /////////////////////
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
-    'use strict';
+
+    update();
 
     render();
     
@@ -336,7 +353,6 @@ function onResize() {}
 /* KEY DOWN CALLBACK */
 ///////////////////////
 function onKeyDown(e) {
-    'use strict';
 
     switch (e.keyCode) {
         case 49: //1
@@ -356,13 +372,56 @@ function onKeyDown(e) {
                 element.wireframe = !element.wireframe;
             })
             break;
+        case 81: //Q
+            break;
+        case 65: //a
+            break;
+        case 87: //w
+            break;
+        case 83: //s
+            break;
+        case 69: //e
+            break;
+        case 68: //d
+            break;
+        case 82: //r
+            break;
+        case 70: //f
+            break;
+        case 37: // left arrow
+            leftKey = true;
+            break;
+        case 38: // up arrow
+            upKey = true;
+            break;
+        case 39: // right arrow
+            rightKey = true;
+            break;
+        case 40: // down arrow
+            downKey = true;
+            break;
     }
 }
 
 ///////////////////////
 /* KEY UP CALLBACK */
 ///////////////////////
-function onKeyUp(e) {}
+function onKeyUp(e) {
+    switch (e.keyCode) {
+        case 37: // left arrow
+            leftKey = false;
+            break;
+        case 38: // up arrow
+            upKey = false;
+            break;
+        case 39: // right arrow
+            rightKey = false;
+            break;
+        case 40: // down arrow
+            downKey = false;
+            break;
+    }
+}
 
 init();
 animate();
