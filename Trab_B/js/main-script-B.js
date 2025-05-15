@@ -267,8 +267,6 @@ function update() {
 }
 
 function handleTrailerMovements() {
-
-    movementVector.set(0, 0);
     
     if (leftKey) {
         //TODO
@@ -303,8 +301,6 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    clock.start();
-
     createMaterials();
     createScene();
     createCameras();
@@ -316,8 +312,6 @@ function init() {
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
-
-    update();
 
     render();
     
@@ -354,19 +348,19 @@ function onKeyDown(e) {
             break;
         case 81: //Q
             break;
-        case 65: //A
+        case 65: //a
             break;
-        case 87: //W
+        case 87: //w
             break;
-        case 83: //S
+        case 83: //s
             break;
-        case 69: //E
+        case 69: //e
             break;
-        case 68: //D
+        case 68: //d
             break;
-        case 82: //R
+        case 82: //r
             break;
-        case 70: //F
+        case 70: //f
             break;
         case 37: // left arrow
             leftKey = true;
