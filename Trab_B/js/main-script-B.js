@@ -13,7 +13,7 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
-var robot, totalHead, head, lEye, rEye, lEar, rEar, lArm, rArm, pipe, forearm, body, abdomen, waist, thigh, lLeg, rLeg, foot;
+var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
 
 var materials = new Map();
 
@@ -27,7 +27,7 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    createRobot(0, 15, 0);
+    createRobot(30, 15, 0);
     createTrailer(-150, 30, 0);
 }
 
@@ -77,7 +77,7 @@ function createMaterials() {
     materials.set("head", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
     materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
-    materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xcf0606, wireframe: false })); // dark red
     materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
     materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
     materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
@@ -113,25 +113,27 @@ function createRobot(x, y, z) {
     robot.add(totalHead);
 
     /*addWheel(robot, );
-    addWheel(robot, );
+    addWheel(robot, );*/
 
     // Arms
-    lArm = new THREE.Object3D();
-    addToArm(lArm, );
-    lArm.position.set();
+    totalLArm = new THREE.Object3D();
+    buildArm(totalLArm, false);
+    totalLArm.position.set(-65, 60, -10);
+    robot.add(totalLArm);
 
-    rArm = new THREE.Object3D();
-    addToArm(rArm, )
-    rArm.position.set();
+    totalRArm = new THREE.Object3D();
+    buildArm(totalRArm, true);
+    totalRArm.position.set(65, 60, -10);
+    robot.add(totalRArm)
 
     // Legs
-    lLeg = new THREE.Object3D();
-    addToLeg(lLeg, );
-    lLeg.position.set();
+    /*totalLLeg = new THREE.Object3D();
+    buildLeg(totalLLeg, );
+    totalLLeg.position.set();
 
-    rLeg = new THREE.Object3D();
-    addToLeg(rLeg, )
-    rLeg.position.set();*/
+    totalRLeg = new THREE.Object3D();
+    buildLeg(totalRLeg, )
+    totalRLeg.position.set();*/
 
     scene.add(robot);
 
@@ -166,6 +168,29 @@ function buildHead(obj) {
 
     obj.add(lEar);
     obj.add(rEar);
+}
+
+function buildArm(obj, pos) {
+    'use strict';
+
+    // Arm
+    arm = new THREE.Mesh(new THREE.BoxGeometry(30, 100, 40), materials.get("arm")); // (0.015, 0.035, 0.02)
+    arm.position.set(0, 0, 0);
+
+    obj.add(arm);
+
+    // Forearm
+    forearm = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 60), materials.get("forearm")); // (0.015, 0.015, 0.03)
+    forearm.position.set(0, -35, 50);
+
+    obj.add(forearm);
+
+    // Pipe
+    pipe = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 90), materials.get("pipe")); // radius top: 0.0025, radius bottom: 0.0025, height: 0.045
+    if (pos == true) { pipe.position.set(20, 25, -15); }
+    else pipe.position.set(-20, 25, -15)
+
+    obj.add(pipe);
 }
 
 function createTrailer(x, y, z) {
