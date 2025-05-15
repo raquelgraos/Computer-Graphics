@@ -14,11 +14,17 @@ var camera, scene, renderer;
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
-    forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, lowerLeg, upperLeg, foot;
+    forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
 
-var materials = new Map();
+const materials = new Map();
+
+var movementVector = new THREE.Vector3(0, 0, 0)
+
+var clock = new THREE.Clock();
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
+
+var delta;
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -264,22 +270,36 @@ function handleCollisions() {}
 ////////////
 function update() {
 
+    delta = clock.getDelta();
+
+    handleTrailerMovements();
+
+    var newPositions = updateTrailerPositions(delta);
+    trailer.position.x = newPositions.x;
+    trailer.position.z = newPositions.z;
 }
 
 function handleTrailerMovements() {
+
+    movementVector.set(0, 0, 0);
     
     if (leftKey) {
-        //TODO
+        movementVector.z += 100;
     } if (upKey) {
-        //TODO
+        movementVector.x -= 100;
     } if (rightKey) {
-        //TODO
+        movementVector.z -= 100;
     } if (downKey) {
-        //TODO
+        movementVector.x += 100;
     }
 }
 
-function handleRobotMovements() {
+function updateTrailerPositions(delta) {
+
+    var newPositionX = trailer.position.x + movementVector.x * delta;
+    var newPositionZ = trailer.position.z + movementVector.z * delta;
+
+    return new THREE.Vector3(newPositionX, 0, newPositionZ);
 
 }
 
@@ -301,11 +321,14 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    clock.start();
+
     createMaterials();
     createScene();
     createCameras();
 
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
 }
 
 /////////////////////
@@ -313,15 +336,12 @@ function init() {
 /////////////////////
 function animate() {
 
+    update();
+
     render();
     
     requestAnimationFrame(animate);
 }
-
-////////////////////////////
-/* RESIZE WINDOW CALLBACK */
-////////////////////////////
-function onResize() {}
 
 ///////////////////////
 /* KEY DOWN CALLBACK */
@@ -380,7 +400,22 @@ function onKeyDown(e) {
 ///////////////////////
 /* KEY UP CALLBACK */
 ///////////////////////
-function onKeyUp(e) {}
+function onKeyUp(e) {
+    switch (e.keyCode) {
+        case 37: // left arrow
+            leftKey = false;
+            break;
+        case 38: // up arrow
+            upKey = false;
+            break;
+        case 39: // right arrow
+            rightKey = false;
+            break;
+        case 40: // down arrow
+            downKey = false;
+            break;
+    }
+}
 
 init();
 animate();
