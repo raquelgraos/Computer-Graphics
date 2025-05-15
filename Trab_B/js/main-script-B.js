@@ -79,7 +79,7 @@ function createMaterials() {
     materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xcf0606, wireframe: false })); // dark red
     materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
-    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // red
     materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
     materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
     materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
@@ -91,13 +91,13 @@ function createMaterials() {
 function createRobot(x, y, z) {
     'use strict';
 
-    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 60), materials.get("waist")); // (0.04, 0.01, 0.03)
+    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 100), materials.get("waist")); // (0.04, 0.01, 0.03)
     waist.position.set(0, 0, 0);
 
-    abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("abdomen")); // (0.02, 0.015, 0.03)
+    abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 100), materials.get("abdomen")); // (0.02, 0.015, 0.03)
     abdomen.position.set(0, 25, 0);
 
-    body = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body")); // (0.05, 0.035, 0.03)
+    body = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 100), materials.get("body")); // (0.05, 0.035, 0.03)
     body.position.set(0, 75, 0);
 
     robot = new THREE.Object3D();
@@ -109,7 +109,7 @@ function createRobot(x, y, z) {
     buildHead(totalHead);
     // nota: é melhor construir a cabeça primeiro a partir das coordenadas 0 e 
     // depois eleva la toda relativamente ao resto do robo (atual) ou ao contrario?
-    totalHead.position.set(0,125,0);
+    totalHead.position.set(0,125,20);
     robot.add(totalHead);
 
     /*addWheel(robot, );
@@ -118,12 +118,12 @@ function createRobot(x, y, z) {
     // Arms
     totalLArm = new THREE.Object3D();
     buildArm(totalLArm, false);
-    totalLArm.position.set(-65, 60, -10);
+    totalLArm.position.set(-65, 60, -30);
     robot.add(totalLArm);
 
     totalRArm = new THREE.Object3D();
     buildArm(totalRArm, true);
-    totalRArm.position.set(65, 60, -10);
+    totalRArm.position.set(65, 60, -30);
     robot.add(totalRArm)
 
     // Legs
