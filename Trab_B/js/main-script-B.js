@@ -13,7 +13,7 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
-var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
+var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, lowerLeg, upperLeg, foot;
 
 var materials = new Map();
 
@@ -27,8 +27,8 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    createRobot(30, 15, 0);
-    createTrailer(-150, 30, 0);
+    createRobot(100, 0, -150);
+    createTrailer(-100, 0, 50);
 }
 
 //////////////////////
@@ -127,13 +127,15 @@ function createRobot(x, y, z) {
     robot.add(totalRArm)
 
     // Legs
-    /*totalLLeg = new THREE.Object3D();
-    buildLeg(totalLLeg, );
-    totalLLeg.position.set();
+    totalLLeg = new THREE.Object3D();
+    buildLeg(totalLLeg, true);
+    totalLLeg.position.set(25, -100, 10);
+    robot.add(totalLLeg);
 
     totalRLeg = new THREE.Object3D();
-    buildLeg(totalRLeg, )
-    totalRLeg.position.set();*/
+    buildLeg(totalRLeg, false);
+    totalRLeg.position.set(-25, -100, 10);
+    robot.add(totalRLeg);
 
     scene.add(robot);
 
@@ -191,6 +193,51 @@ function buildArm(obj, pos) {
     else pipe.position.set(-20, 25, -15)
 
     obj.add(pipe);
+}
+
+function buildLeg(obj, left) {
+    'use strict';
+
+    /* Lower Leg */
+
+    // Leg
+    leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg")); // (0.015, 0.06, 0.01)
+    leg.position.set(0, 0, 0);
+
+    // Foot
+    foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 20), materials.get("foot"));
+    if (left) { foot.position.set(5, -50, 20); }
+    else foot.position.set(-5, -50, 20);
+
+    lowerLeg = new THREE.Object3D();
+    lowerLeg.add(leg);
+    lowerLeg.add(foot);
+
+    if (left) {
+        addWheel(lowerLeg, 15, -5, -5);
+        addWheel(lowerLeg, 15, -45, -5);
+    } else {
+        addWheel(lowerLeg, -15, -5, -5);
+        addWheel(lowerLeg, -15, -45, -5);
+    }
+
+    obj.add(lowerLeg);
+
+    /* Upper Leg */
+
+    // Thigh
+    thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh")); // (0.01, 0.025, 0.005)
+    if (left) { thigh.position.set(-5, 85, -5); }
+    else thigh.position.set(5, 85, -5);
+
+    upperLeg = new THREE.Object3D();
+    upperLeg.add(thigh);
+
+    if (left) addWheel(upperLeg, 15, 95, -5);
+    else addWheel(upperLeg, -15, 95, -5);
+
+    obj.add(upperLeg);
+
 }
 
 function createTrailer(x, y, z) {
