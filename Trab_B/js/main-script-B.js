@@ -13,7 +13,7 @@ var camera, scene, renderer;
 
 var trailer, box, append;
 var wheel;
-var head, eye, ear, arm, pipe, forearm, body, abdomen, waist, thigh, leg, foot;
+var robot, totalHead, head, lEye, rEye, lEar, rEar, lArm, rArm, pipe, forearm, body, abdomen, waist, thigh, lLeg, rLeg, foot;
 
 var materials = new Map();
 
@@ -27,8 +27,8 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    //createRobot();
-    createTrailer(0, 30, 0);
+    createRobot(0, 15, 0);
+    createTrailer(-150, 30, 0);
 }
 
 //////////////////////
@@ -37,7 +37,7 @@ function createScene() {
 function createCameras() {
     'use strict';
 
-    const camera_pos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
+    const cameraPos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
                                 new Array(200, 0, 0), // proj. ortogonal - lateral
                                 new Array(0, 250, 0), // proj. ortogonal - topo
                                 new Array(500, 500, 500)); // proj. perspetiva
@@ -54,7 +54,7 @@ function createCameras() {
                                             1000);
         }
 
-        camera.position.set(camera_pos[i][0], camera_pos[i][1], camera_pos[i][2]);
+        camera.position.set(cameraPos[i][0], cameraPos[i][1], cameraPos[i][2]);
         camera.lookAt(scene.position);
         cameras.push(camera);
     }
@@ -75,21 +75,97 @@ function createMaterials() {
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false })); // very very dark gray almost black
     materials.set("head", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
-    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xffffff, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
     materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
     materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
     materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
     materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
-    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false })); // white
-    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false })); // white
+    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
+    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
     materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
     materials.set("leg", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("foot", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
 }
 
 function createRobot(x, y, z) {
+    'use strict';
+
+    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 60), materials.get("waist")); // (0.04, 0.01, 0.03)
+    waist.position.set(0, 0, 0);
+
+    abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("abdomen")); // (0.02, 0.015, 0.03)
+    abdomen.position.set(0, 25, 0);
+
+    body = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body")); // (0.05, 0.035, 0.03)
+    body.position.set(0, 75, 0);
+
+    robot = new THREE.Object3D();
+    robot.add(waist);
+    robot.add(abdomen);
+    robot.add(body);
+
+    totalHead = new THREE.Object3D();
+    buildHead(totalHead);
+    // nota: é melhor construir a cabeça primeiro a partir das coordenadas 0 e 
+    // depois eleva la toda relativamente ao resto do robo (atual) ou ao contrario?
+    totalHead.position.set(0,125,0);
+    robot.add(totalHead);
+
+    /*addWheel(robot, );
+    addWheel(robot, );
+
+    // Arms
+    lArm = new THREE.Object3D();
+    addToArm(lArm, );
+    lArm.position.set();
+
+    rArm = new THREE.Object3D();
+    addToArm(rArm, )
+    rArm.position.set();
+
+    // Legs
+    lLeg = new THREE.Object3D();
+    addToLeg(lLeg, );
+    lLeg.position.set();
+
+    rLeg = new THREE.Object3D();
+    addToLeg(rLeg, )
+    rLeg.position.set();*/
+
+    scene.add(robot);
+
+    robot.position.set(x, y , z);
+}
+
+function buildHead(obj) {
+    'use strict';
+
+    // Head
+    head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head")); // (0.02, 0.015, 0.03)
+    head.position.set(0, 0, 0);
+
+    obj.add(head);
+
+    // Eyes
+    lEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
+    lEye.position.set(5, 0, 31);
     
+    rEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
+    rEye.position.set(-5, 0, 31);
+
+    obj.add(lEye);
+    obj.add(rEye);
+
+    // Ears
+    lEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
+    lEar.position.set(15, 20, -25);
+
+    rEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
+    rEar.position.set(-15, 20, -25);
+
+    obj.add(lEar);
+    obj.add(rEar);
 }
 
 function createTrailer(x, y, z) {
@@ -116,6 +192,7 @@ function createTrailer(x, y, z) {
 }
 
 function addWheel(obj, x, y, z) {
+    'use strict';
 
     wheel = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 20), materials.get("wheel")); // radious top: 0.0075, radius bottom: 0.0075, height: 0.01
     wheel.rotation.z = Math.PI / 2;
