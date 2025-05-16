@@ -14,7 +14,7 @@ var camera, scene, renderer;
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
-    forearm, body, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
+    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot;
 
 const materials = new Map();
 
@@ -98,13 +98,17 @@ function createRobot(x, y, z) {
     abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 100), materials.get("abdomen")); // (0.02, 0.015, 0.03)
     abdomen.position.set(0, 25, 0);
 
-    body = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 100), materials.get("body")); // (0.05, 0.035, 0.03)
-    body.position.set(0, 75, 0);
+    frontBody = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body")); // (0.05, 0.035, 0.03)
+    frontBody.position.set(0, 75, 20);
+
+    backBody = new THREE.Mesh(new THREE.BoxGeometry(40, 70, 40), materials.get("body")); // (0.05, 0.035, 0.03)
+    backBody.position.set(0, 75, -30);
 
     robot = new THREE.Object3D();
     robot.add(waist);
     robot.add(abdomen);
-    robot.add(body);
+    robot.add(frontBody);
+    robot.add(backBody);
 
     totalHead = new THREE.Object3D();
     buildHead(totalHead);
