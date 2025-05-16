@@ -44,28 +44,28 @@ function createScene() {
 //////////////////////
 function createCameras() {
 
-    const cameraPos = new Array(new Array(0, 0, 200), // proj. ortogonal - frontal
-                                new Array(200, 0, 0), // proj. ortogonal - lateral
-                                new Array(0, 250, 0), // proj. ortogonal - topo
-                                new Array(500, 500, 500)); // proj. perspetiva
+    const cameraPos = new Array(new Array(0, 0, 200),       // orthographic - frontal
+                                new Array(200, 0, 0),       // orthographic - lateral
+                                new Array(0, 250, 0),       // orthographic - top
+                                new Array(500, 500, 500));  // perspective
 
     for (let i = 0; i < 4; i++) {
         if (i == 3) {
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+            camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000); // fov, aspect, near, far
         } else {
-            camera = new THREE.OrthographicCamera(window.innerWidth / -5,
-                                            window.innerWidth / 5,
-                                            window.innerHeight / 5,
-                                            window.innerHeight / -5,
-                                            1,
-                                            1000);
+            camera = new THREE.OrthographicCamera(window.innerWidth / -5,   // left
+                                            window.innerWidth / 5,          // right
+                                            window.innerHeight / 5,         // top
+                                            window.innerHeight / -5,        // bottom
+                                            1,                              // near
+                                            1000);                          // far
         }
 
         camera.position.set(cameraPos[i][0], cameraPos[i][1], cameraPos[i][2]);
         camera.lookAt(scene.position);
         cameras.push(camera);
     }
-    camera = cameras[0];
+    camera = cameras[0]; // default camera is Front
 }
 
 ////////////////////////
@@ -77,15 +77,15 @@ function createMaterials() {
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false })); // very very dark gray almost black
     materials.set("head", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
-    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
     materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("arm", new THREE.MeshBasicMaterial({ color: 0xcf0606, wireframe: false })); // dark red
-    materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
-    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
+    materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
+    materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // red
     materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
     materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
     materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
-    materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xa5a4a4, metalness: 1.0, wireframe: false })); // metallic gray
+    materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
     materials.set("leg", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("foot", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
 }
