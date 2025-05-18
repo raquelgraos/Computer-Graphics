@@ -14,7 +14,7 @@ var camera, scene, renderer;
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
-    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, foot, feet;
+    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, rFoot, lFoot;
 
 const materials = new Map();
 
@@ -125,18 +125,29 @@ function createRobot(x, y, z) {
     totalRArm = new THREE.Object3D();
     buildArm(totalRArm, false);
     totalRArm.position.set(-65, 60, -75);
-    robot.add(totalRArm)
+    robot.add(totalRArm);
+
+    // Feet
+    lFoot = new THREE.Object3D();
+    var mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
+    mesh.position.set(5, -70, 10);
+    lFoot.add(mesh);
+    robot.add(lFoot);
+
+    rFoot = new THREE.Object3D();
+    mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
+    mesh.position.set(-5, -70, 10);
+    rFoot.add(mesh);
+    robot.add(rFoot);
 
     // Legs
-    feet = new THREE.Object3D();
-
     totalLLeg = new THREE.Object3D();
-    buildLeg(totalLLeg, feet, true);
+    buildLeg(totalLLeg, lFoot, true);
     totalLLeg.position.set(25, -100, -25);
     robot.add(totalLLeg);
 
     totalRLeg = new THREE.Object3D();
-    buildLeg(totalRLeg, feet, false);
+    buildLeg(totalRLeg, rFoot, false);
     totalRLeg.position.set(-25, -100, -25);
     robot.add(totalRLeg);
 
@@ -209,14 +220,9 @@ function buildLeg(obj, obj2, left) {
     obj.add(leg);
 
     // Foot 
-    foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
-    if (left) { foot.position.set(5, -70, 10); }
-    else foot.position.set(-5, -70, 10);
+    obj.add(obj2);
 
-    obj2.add(foot);
-
-    obj.add(foot);
-
+    // Wheels
     if (left) {
         addWheel(obj, 15, -5, 5);
         addWheel(obj, 15, -45, 5);
