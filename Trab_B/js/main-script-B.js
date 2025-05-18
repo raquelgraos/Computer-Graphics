@@ -23,6 +23,7 @@ var movementVector = new THREE.Vector3(0, 0, 0)
 var clock = new THREE.Clock();
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
+let armsMovementIn = false, armsMovementOut = false;
 
 var delta;
 
@@ -35,7 +36,7 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    createRobot(100, 0, -150);
+    createRobot(100, 0, -105);
     createTrailer(-100, 0, 50);
 }
 
@@ -92,17 +93,17 @@ function createMaterials() {
 
 function createRobot(x, y, z) {
 
-    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 100), materials.get("waist")); // (0.04, 0.01, 0.03)
+    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 10), materials.get("waist")); // (0.04, 0.01, 0.03)
     waist.position.set(0, 0, 0);
 
     abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 100), materials.get("abdomen")); // (0.02, 0.015, 0.03)
-    abdomen.position.set(0, 25, 0);
+    abdomen.position.set(0, 25, -45);
 
     frontBody = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body")); // (0.05, 0.035, 0.03)
-    frontBody.position.set(0, 75, 20);
+    frontBody.position.set(0, 75, -25);
 
     backBody = new THREE.Mesh(new THREE.BoxGeometry(40, 70, 40), materials.get("body")); // (0.05, 0.035, 0.03)
-    backBody.position.set(0, 75, -30);
+    backBody.position.set(0, 75, -75);
 
     robot = new THREE.Object3D();
     robot.add(waist);
@@ -112,30 +113,34 @@ function createRobot(x, y, z) {
 
     totalHead = new THREE.Object3D();
     buildHead(totalHead);
-    totalHead.position.set(0,125,20);
+    totalHead.position.set(0,125,-25);
     robot.add(totalHead);
 
     // Arms
     totalLArm = new THREE.Object3D();
     buildArm(totalLArm, true);
-    totalLArm.position.set(65, 60, -30);
+    totalLArm.position.set(65, 60, -75);
     robot.add(totalLArm);
 
     totalRArm = new THREE.Object3D();
     buildArm(totalRArm, false);
-    totalRArm.position.set(-65, 60, -30);
+    totalRArm.position.set(-65, 60, -75);
     robot.add(totalRArm)
 
     // Legs
     totalLLeg = new THREE.Object3D();
     buildLeg(totalLLeg, true);
-    totalLLeg.position.set(25, -100, 30);
+    totalLLeg.position.set(25, -100, -25);
     robot.add(totalLLeg);
 
     totalRLeg = new THREE.Object3D();
     buildLeg(totalRLeg, false);
-    totalRLeg.position.set(-25, -100, 30);
+    totalRLeg.position.set(-25, -100, -25);
     robot.add(totalRLeg);
+
+    // Upper wheels
+    addWheel(robot, 40, -5, -20);
+    addWheel(robot, -40, -5, -20);
 
     scene.add(robot);
 
@@ -202,27 +207,24 @@ function buildLeg(obj, left) {
     obj.add(leg);
 
     // Foot 
-    foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 20), materials.get("foot"));
-    if (left) { foot.position.set(5, -50, 20); }
-    else foot.position.set(-5, -50, 20);
+    foot = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
+    if (left) { foot.position.set(5, -70, 10); }
+    else foot.position.set(-5, -70, 10);
 
     obj.add(foot);
 
     if (left) {
-        addWheel(obj, 15, -5, -5);
-        addWheel(obj, 15, -45, -5);
+        addWheel(obj, 15, -5, 5);
+        addWheel(obj, 15, -45, 5);
     } else {
-        addWheel(obj, -15, -5, -5);
-        addWheel(obj, -15, -45, -5);
+        addWheel(obj, -15, -5, 5);
+        addWheel(obj, -15, -45, 5);
     }
     
     // Thigh
     thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh")); // (0.01, 0.025, 0.005)
-    if (left) { thigh.position.set(-5, 85, -5); }
-    else thigh.position.set(5, 85, -5);
-
-    if (left) addWheel(obj, 15, 95, -5);
-    else addWheel(obj, -15, 95, -5);
+    if (left) { thigh.position.set(-5, 85, 5); }
+    else thigh.position.set(5, 85, 5);
 
     obj.add(thigh);
 }
@@ -276,11 +278,27 @@ function update() {
 
     delta = clock.getDelta();
 
+    //totalLArm.position.x = 35;
+
+    handleRobotMovements(delta);
     handleTrailerMovements();
 
     var newPositions = updateTrailerPositions(delta);
     trailer.position.x = newPositions.x;
     trailer.position.z = newPositions.z;
+}
+
+function handleRobotMovements(delta) {
+
+    if (armsMovementIn) {
+        totalLArm.position.x = 35; //THREE.Math.clamp(totalLArm.position.x - delta * 10, 35, 65);
+        totalRArm.position.x = -35; //THREE.Math.clamp(totalRArm.position.x + delta * 10, -65, -35);
+        armsMovementIn = false;
+    } if (armsMovementOut) {
+        totalLArm.position.x = 65; //THREE.Math.clamp(totalLArm.position.x + delta * 10, 35, 65);
+        totalRArm.position.x = -65; //THREE.Math.clamp(totalRArm.position.x - delta * 10, -65, -35);
+        armsMovementOut = false;
+    }
 }
 
 function handleTrailerMovements() {
@@ -379,8 +397,10 @@ function onKeyDown(e) {
         case 83: //s
             break;
         case 69: //e
+            armsMovementIn = true;
             break;
         case 68: //d
+            armsMovementOut = true;
             break;
         case 82: //r
             break;
