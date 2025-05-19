@@ -14,7 +14,7 @@ var camera, scene, renderer;
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
-    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, rFoot, lFoot;
+    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, rFoot, lFoot, inferiorMembers;
 
 const materials = new Map();
 
@@ -23,7 +23,7 @@ var movementVector = new THREE.Vector3(0, 0, 0)
 var clock = new THREE.Clock();
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
-let armsMovementIn = false, armsMovementOut = false;
+let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, inferiorMembersMovementOut = false;
 
 var delta;
 
@@ -141,15 +141,22 @@ function createRobot(x, y, z) {
     robot.add(rFoot);
 
     // Legs
+    inferiorMembers = new THREE.Object3D();
+    inferiorMembers.position.set(0, -5, -20);
+
+    // Left leg
     totalLLeg = new THREE.Object3D();
     buildLeg(totalLLeg, lFoot, true);
-    totalLLeg.position.set(25, -100, -25);
-    robot.add(totalLLeg);
+    totalLLeg.position.set(25, -95, -5);
+    inferiorMembers.add(totalLLeg);
 
+    // Right leg
     totalRLeg = new THREE.Object3D();
     buildLeg(totalRLeg, rFoot, false);
-    totalRLeg.position.set(-25, -100, -25);
-    robot.add(totalRLeg);
+    totalRLeg.position.set(-25, -95, -5);
+    inferiorMembers.add(totalRLeg);
+
+    robot.add(inferiorMembers);
 
     // Upper wheels
     addWheel(robot, 40, -5, -20);
@@ -242,10 +249,10 @@ function buildLeg(obj, obj2, left) {
 function createTrailer(x, y, z) {
 
     box = new THREE.Mesh(new THREE.BoxGeometry(100, 140, 240), materials.get("trailer")); // (0.05, 0.07. 0.12) -> escala 2000:1
-    box.position.set(0, 0, 0);
+    box.position.set(0, 85, 0);
 
     append = new THREE.Mesh(new THREE.BoxGeometry(10, 20, 10), materials.get("append")); // (0.005, 0.01, 0.005)
-    append.position.set(0, -80, 105);
+    append.position.set(0, 5, 105);
 
     trailer = new THREE.Object3D();
     trailer.add(box);
@@ -253,10 +260,10 @@ function createTrailer(x, y, z) {
 
     scene.add(trailer);
 
-    addWheel(trailer, 30, -85, -90); // (0.015, 0.0425, 0.045)
-    addWheel(trailer, 30, -85, -45); // (0.015, 0.0425, 0.0225)
-    addWheel(trailer, -30, -85, -90);
-    addWheel(trailer, -30, -85, -45);
+    addWheel(trailer, 30, 0, -90); // (0.015, 0.0425, 0.045)
+    addWheel(trailer, 30, 0, -45); // (0.015, 0.0425, 0.0225)
+    addWheel(trailer, -30, 0, -90);
+    addWheel(trailer, -30, 0, -45);
 
     trailer.position.set(x, y, z);
 }
@@ -288,8 +295,6 @@ function update() {
 
     delta = clock.getDelta();
 
-    //totalLArm.position.x = 35;
-
     handleRobotMovements(delta);
     handleTrailerMovements();
 
@@ -300,13 +305,21 @@ function update() {
 
 function handleRobotMovements(delta) {
 
+    if (inferiorMembersMovementIn) {
+        inferiorMembers.rotateX(Math.min(delta * 2, Math.PI / 2 - inferiorMembers.rotation.x));
+        inferiorMembersMovementIn = false;
+    }
+    if (inferiorMembersMovementOut) {
+        inferiorMembers.rotateX(-(Math.min(delta * 2, inferiorMembers.rotation.x)));
+        inferiorMembersMovementOut = false;
+    }
     if (armsMovementIn) {
-        totalLArm.position.x = 35; //THREE.Math.clamp(totalLArm.position.x - delta * 10, 35, 65);
-        totalRArm.position.x = -35; //THREE.Math.clamp(totalRArm.position.x + delta * 10, -65, -35);
+        totalLArm.position.x = Math.max(totalLArm.position.x - delta * 40, 35);
+        totalRArm.position.x = Math.min(totalRArm.position.x + delta * 40, -35);
         armsMovementIn = false;
     } if (armsMovementOut) {
-        totalLArm.position.x = 65; //THREE.Math.clamp(totalLArm.position.x + delta * 10, 35, 65);
-        totalRArm.position.x = -65; //THREE.Math.clamp(totalRArm.position.x - delta * 10, -65, -35);
+        totalLArm.position.x = Math.min(totalLArm.position.x + delta * 40, 65);
+        totalRArm.position.x = Math.max(totalRArm.position.x - rStep, -65);
         armsMovementOut = false;
     }
 }
@@ -403,8 +416,10 @@ function onKeyDown(e) {
         case 65: //a
             break;
         case 87: //w
+            inferiorMembersMovementIn = true;
             break;
         case 83: //s
+            inferiorMembersMovementOut = true;
             break;
         case 69: //e
             armsMovementIn = true;
