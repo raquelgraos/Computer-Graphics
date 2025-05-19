@@ -14,7 +14,8 @@ var camera, scene, renderer;
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
-    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, rFoot, lFoot, inferiorMembers;
+    forearm, frontBody, backBody, abdomen, waist, thigh, totalLLeg, totalRLeg, leg, 
+    rFoot, lFoot, inferiorMembers, feet;
 
 const materials = new Map();
 
@@ -23,7 +24,7 @@ var movementVector = new THREE.Vector3(0, 0, 0)
 var clock = new THREE.Clock();
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
-let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, inferiorMembersMovementOut = false;
+let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, inferiorMembersMovementOut = false, feetMovementIn = false, feetMovementOut = false;
 
 var delta;
 
@@ -128,17 +129,22 @@ function createRobot(x, y, z) {
     robot.add(totalRArm);
 
     // Feet
+    feet = new THREE.Object3D();
+    feet.position.set(0, -155, 5);
+
+    // Left foot
     lFoot = new THREE.Object3D();
     var mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
-    mesh.position.set(5, -70, 10);
+    mesh.position.set(5, -10, 0);
     lFoot.add(mesh);
-    robot.add(lFoot);
+    feet.add(lFoot);
 
+    // Right Foot
     rFoot = new THREE.Object3D();
     mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
-    mesh.position.set(-5, -70, 10);
+    mesh.position.set(-5, -10, 0);
     rFoot.add(mesh);
-    robot.add(rFoot);
+    feet.add(rFoot);
 
     // Legs
     inferiorMembers = new THREE.Object3D();
@@ -146,16 +152,17 @@ function createRobot(x, y, z) {
 
     // Left leg
     totalLLeg = new THREE.Object3D();
-    buildLeg(totalLLeg, lFoot, true);
+    buildLeg(totalLLeg, true);
     totalLLeg.position.set(25, -95, -5);
     inferiorMembers.add(totalLLeg);
 
     // Right leg
     totalRLeg = new THREE.Object3D();
-    buildLeg(totalRLeg, rFoot, false);
+    buildLeg(totalRLeg, false);
     totalRLeg.position.set(-25, -95, -5);
     inferiorMembers.add(totalRLeg);
 
+    inferiorMembers.add(feet);
     robot.add(inferiorMembers);
 
     // Upper wheels
@@ -218,16 +225,13 @@ function buildArm(obj, left) {
     obj.add(pipe);
 }
 
-function buildLeg(obj, obj2, left) {
+function buildLeg(obj, left) {
 
     // Leg
     leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg")); // (0.015, 0.06, 0.01)
     leg.position.set(0, 0, 0);
 
     obj.add(leg);
-
-    // Foot 
-    obj.add(obj2);
 
     // Wheels
     if (left) {
@@ -304,7 +308,14 @@ function update() {
 }
 
 function handleRobotMovements(delta) {
-
+    if (feetMovementIn){
+        feet.rotateX(Math.min(delta * 2, Math.PI / 2 - feet.rotation.x));
+        feetMovementIn = false;
+    }
+    if (feetMovementOut){
+        feet.rotateX(-(Math.min(delta * 2, feet.rotation.x)));
+        feetMovementOut = false;
+    }
     if (inferiorMembersMovementIn) {
         inferiorMembers.rotateX(Math.min(delta * 2, Math.PI / 2 - inferiorMembers.rotation.x));
         inferiorMembersMovementIn = false;
@@ -319,7 +330,7 @@ function handleRobotMovements(delta) {
         armsMovementIn = false;
     } if (armsMovementOut) {
         totalLArm.position.x = Math.min(totalLArm.position.x + delta * 40, 65);
-        totalRArm.position.x = Math.max(totalRArm.position.x - rStep, -65);
+        totalRArm.position.x = Math.max(totalRArm.position.x - delta * 40, -65);
         armsMovementOut = false;
     }
 }
@@ -412,8 +423,10 @@ function onKeyDown(e) {
             })
             break;
         case 81: //q
+            feetMovementIn = true;
             break;
         case 65: //a
+            feetMovementOut = true;
             break;
         case 87: //w
             inferiorMembersMovementIn = true;
