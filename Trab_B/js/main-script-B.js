@@ -135,14 +135,14 @@ function createRobot(x, y, z) {
     // Left foot
     lFoot = new THREE.Object3D();
     var mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
-    mesh.position.set(5, -10, 0);
+    mesh.position.set(30, -10, 0);
     lFoot.add(mesh);
     feet.add(lFoot);
 
     // Right Foot
     rFoot = new THREE.Object3D();
     mesh = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), materials.get("foot"));
-    mesh.position.set(-5, -10, 0);
+    mesh.position.set(-30, -10, 0);
     rFoot.add(mesh);
     feet.add(rFoot);
 
