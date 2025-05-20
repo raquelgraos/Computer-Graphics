@@ -39,8 +39,8 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    createRobot(100, 0, -105);
-    createTrailer(-100, 0, 50);
+    createRobot(100, 0, 0);
+    createTrailer(-100, -5, 50);
 }
 
 //////////////////////
