@@ -24,7 +24,9 @@ var movementVector = new THREE.Vector3(0, 0, 0)
 var clock = new THREE.Clock();
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
-let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, inferiorMembersMovementOut = false, feetMovementIn = false, feetMovementOut = false;
+let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, 
+    inferiorMembersMovementOut = false, feetMovementIn = false, feetMovementOut = false,
+    headMovementIn = false, headMovementOut = false;
 
 var delta;
 
@@ -114,7 +116,7 @@ function createRobot(x, y, z) {
 
     totalHead = new THREE.Object3D();
     buildHead(totalHead);
-    totalHead.position.set(0,125,-25);
+    totalHead.position.set(0,110,5);
     robot.add(totalHead);
 
     // Arms
@@ -178,26 +180,26 @@ function buildHead(obj) {
 
     // Head
     head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head")); // (0.02, 0.015, 0.03)
-    head.position.set(0, 0, 0);
+    head.position.set(0, 15, -30);
 
     obj.add(head);
 
     // Eyes
     lEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
-    lEye.position.set(5, 0, 31);
+    lEye.position.set(5, 15, 1);
     
     rEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
-    rEye.position.set(-5, 0, 31);
+    rEye.position.set(-5, 15, 1);
 
     obj.add(lEye);
     obj.add(rEye);
 
     // Ears
     lEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
-    lEar.position.set(15, 20, -25);
+    lEar.position.set(15, 35, -55);
 
     rEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
-    rEar.position.set(-15, 20, -25);
+    rEar.position.set(-15, 35, -55);
 
     obj.add(lEar);
     obj.add(rEar);
@@ -308,6 +310,14 @@ function update() {
 }
 
 function handleRobotMovements(delta) {
+    if (headMovementIn){
+        totalHead.rotateX(-(Math.min(delta * 2, Math.PI / 2 + totalHead.rotation.x)));
+        headMovementIn = false;
+    }
+    if (headMovementOut){
+        totalHead.rotateX(Math.min(delta * 2, -totalHead.rotation.x));
+        headMovementOut = false;
+    }
     if (feetMovementIn){
         feet.rotateX(Math.min(delta * 2, Math.PI / 2 - feet.rotation.x));
         feetMovementIn = false;
@@ -441,8 +451,10 @@ function onKeyDown(e) {
             armsMovementOut = true;
             break;
         case 82: //r
+            headMovementIn = true;
             break;
         case 70: //f
+            headMovementOut = true;
             break;
         case 37: // left arrow
             leftKey = true;
