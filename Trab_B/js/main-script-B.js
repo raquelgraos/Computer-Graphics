@@ -19,6 +19,8 @@ var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, p
 
 const materials = new Map();
 
+var coupled = false
+
 var movementVector = new THREE.Vector3(0, 0, 0)
 
 var clock = new THREE.Clock();
@@ -26,7 +28,7 @@ var clock = new THREE.Clock();
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
 let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn = false, 
     inferiorMembersMovementOut = false, feetMovementIn = false, feetMovementOut = false,
-    headMovementIn = false, headMovementOut = false;
+    headMovementIn = false, headMovementOut = false, isTruckMode = false;
 
 var delta;
 
@@ -283,14 +285,47 @@ function addWheel(obj, x, y, z) {
     obj.add(wheel);
 
 }
+//////////////////////
+/* CHECK TRUCK MODE */
+//////////////////////
+function checkTruckMode() {
+    return (
+        Math.abs(totalRArm.position.x + 35) < 0.01 &&
+        Math.abs(totalHead.rotation.x + Math.PI / 2) < 0.01 &&
+        Math.abs(inferiorMembers.rotation.x - Math.PI / 2) < 0.01 &&
+        Math.abs(feet.rotation.x - Math.PI / 2) < 0.01
+    );
+}
+
 
 //////////////////////
-/* CHECK COLLISIONS */
+/* CHECK AND HANDLE COLLISIONS */
 //////////////////////
-function checkCollisions() {}
+function checkCollisions(tentativePos) {
+    // Guarda a posição original do trailer
+    const originalPos = trailer.position.clone();
+
+    // Move temporariamente o trailer para a posição tentativa
+    trailer.position.set(tentativePos.x, tentativePos.y, tentativePos.z);
+
+    // Cria as bounding boxes alinhadas com o mundo
+    const trailerBox = new THREE.Box3().setFromObject(trailer);
+    const robotBox = new THREE.Box3().setFromObject(robot);
+
+    // Volta a pôr o trailer na posição original
+    trailer.position.copy(originalPos);
+
+    // Se houver colisão, devolve a posição anterior (não deixa mover)
+    if (trailerBox.intersectsBox(robotBox)) {
+        return true;
+    }
+
+    // Se não houver colisão, aceita a nova posição
+    return false;
+}
 
 ///////////////////////
-/* HANDLE COLLISIONS */
+/* HANDLE COLLISIONS ---->  REMOVE*/ 
 ///////////////////////
 function handleCollisions() {}
 
@@ -298,15 +333,43 @@ function handleCollisions() {}
 /* UPDATE */
 ////////////
 function update() {
+    // if (!coupled) {
+    // delta = clock.getDelta();
+    // handleRobotMovements(delta);
+    // var tentativePos = updateTrailerPositions(delta);
+    //}
 
     delta = clock.getDelta();
-
+    // Atualiza a flag em cada frame
+    isTruckMode = checkTruckMode();
     handleRobotMovements(delta);
     handleTrailerMovements();
 
-    var newPositions = updateTrailerPositions(delta);
+    var tentativePos = updateTrailerPositions(delta);
+    var newPositions = checkCollisions(tentativePos);
     trailer.position.x = newPositions.x;
     trailer.position.z = newPositions.z;
+}
+function update(){
+    if (!coupled) {
+        delta = clock.getDelta();
+        handleRobotMovements(delta);
+        handleTrailerMovements();
+        var tentativePos = updateTrailerPositions(delta);
+        if (checkTruckMode()) {
+            if (!checkCollisions(tentativePos)) {
+                trailer.position.x = tentativePos.x;
+                trailer.position.z = tentativePos.z;
+            }
+            else{
+                coupled = true;
+                
+            }
+        }
+    }
+
+
+
 }
 
 function handleRobotMovements(delta) {
