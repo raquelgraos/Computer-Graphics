@@ -32,6 +32,8 @@ let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn =
 
 var delta;
 
+let TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
+
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -289,15 +291,11 @@ function addWheel(obj, x, y, z) {
 /* MOVE TRAILER TO FINAL POSITION */
 ////////////////////////////////////
 function MoveTrailerfinal() {
-    const offsetX = -50; // distância atrás do camião
-    const offsetY = robot.position.y; 
-    const offsetZ = robot.position.z; 
-
-    trailer.position.set(
-        robot.position.x + offsetX,
-        offsetY,
-        offsetZ
-    );
+    TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
+    trailer.position.lerp(couplingTarget, 10);
+    if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
+            trailer.position.copy(TrailerTarget);
+    }
 }
 //////////////////////
 /* CHECK TRUCK MODE */
@@ -343,14 +341,13 @@ function checkCollisions(tentativePos) {
 ///////////////////////
 function handleCollisions() {
     coupled = true;
-    MoveTrailerfinal();// mover o trailer para a posição final, no atrelado do truck
 }
 
 ////////////
 /* UPDATE */
 ////////////
 function update(){
-    if (!coupled) {
+    if (coupled == false) {
         delta = clock.getDelta();
         handleRobotMovements(delta);
         handleTrailerMovements();
@@ -367,6 +364,12 @@ function update(){
         else{ // false -> robot mode
             trailer.position.x = tentativePos.x;
             trailer.position.z = tentativePos.z;
+        }
+    }
+    else {// -> moving to final position
+        trailer.position.lerp(TrailerTarget, 0.005);
+        if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
+            trailer.position.copy(TrailerTarget);
         }
     }
 }
