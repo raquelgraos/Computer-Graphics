@@ -309,32 +309,102 @@ function checkTruckMode() {
     );
 }
 
+function pipeIntersectsAABB(center, min, max) {
+        const closest = {
+            x: Math.max(min.x, Math.min(center.x, max.x)),
+            y: Math.max(min.y, Math.min(center.y, max.y)),
+            z: Math.max(min.z, Math.min(center.z, max.z))
+        };
+        const dx = center.x - closest.x;
+        const dy = center.y - closest.y;
+        const dz = center.z - closest.z;
+        return (dx * dx + dy * dy + dz * dz) <= (25);
+}
+
+function updateAABBs(tentativePos) {
+    const trailerHalf = { x: 50, y: 70, z: 120 };
+    const robotHalf = { x: 50, y: 110, z: 80 };
+
+    const trailerCenter = {
+        x: tentativePos.x,
+        y: tentativePos.y + 85,
+        z: tentativePos.z
+    };
+
+    const robotCenter = {
+        x: robot.position.x,
+        y: robot.position.y + 75,
+        z: robot.position.z
+    };
+
+    const trailerMin = {
+        x: trailerCenter.x - trailerHalf.x,
+        y: trailerCenter.y - trailerHalf.y,
+        z: trailerCenter.z - trailerHalf.z
+    };
+    const trailerMax = {
+        x: trailerCenter.x + trailerHalf.x,
+        y: trailerCenter.y + trailerHalf.y,
+        z: trailerCenter.z + trailerHalf.z
+    };
+
+    const robotMin = {
+        x: robotCenter.x - robotHalf.x,
+        y: robotCenter.y - robotHalf.y,
+        z: robotCenter.z - robotHalf.z
+    };
+    const robotMax = {
+        x: robotCenter.x + robotHalf.x,
+        y: robotCenter.y + robotHalf.y,
+        z: robotCenter.z + robotHalf.z
+    };
+
+    const pipeLeft = {
+        x: robot.position.x + totalLArm.position.x + 20,
+        y: robot.position.y + totalLArm.position.y + 25,
+        z: robot.position.z + totalLArm.position.z - 15
+    };
+    const pipeRight = {
+        x: robot.position.x + totalRArm.position.x - 20,
+        y: robot.position.y + totalRArm.position.y + 25,
+        z: robot.position.z + totalRArm.position.z - 15
+    };
+
+
+    return { trailerMin, trailerMax, robotMin, robotMax, pipeLeft, pipeRight };
+}
 
 //////////////////////
 /* CHECK COLLISIONS */
 //////////////////////
 function checkCollisions(tentativePos) {
-    // raquel: aqui acho que é melhor fazeres so update dos AABBs e fazer aqueles testes do min/max do que estares mm a mudar a posicao
+    const {
+        trailerMin,
+        trailerMax,
+        robotMin,
+        robotMax,
+        pipeLeft,
+        pipeRight,
+    } = updateAABBs(tentativePos);
 
-    // updateTrailerAABBs(tentativePos);
-
-    // Guarda a posição original do trailer
-    const originalPos = trailer.position.clone();
-
-    // Move temporariamente o trailer para a posição tentativa
-    trailer.position.set(tentativePos.x, tentativePos.y, tentativePos.z);
-
-    // Cria as bounding boxes alinhadas com o mundo
-    const trailerBox = new THREE.Box3().setFromObject(trailer);
-    const robotBox = new THREE.Box3().setFromObject(robot);
-
-    // Volta a pôr o trailer na posição original
-    trailer.position.copy(originalPos);
-
-    // If there is collision, returns true
-    if (trailerBox.intersectsBox(robotBox)) {
+ 
+    if (
+        trailerMax.x > robotMin.x &&
+        trailerMin.x < robotMax.x &&
+        trailerMax.y > robotMin.y &&
+        trailerMin.y < robotMax.y &&
+        trailerMax.z > robotMin.z &&
+        trailerMin.z < robotMax.z
+    ) {
         return true;
     }
+    if (
+        pipeIntersectsAABB(pipeLeft, trailerMin, trailerMax) ||
+        pipeIntersectsAABB(pipeRight, trailerMin, trailerMax)
+    ) {
+        return true;
+    }
+
     return false;
 }
 
@@ -382,7 +452,7 @@ function update() {
             trailer.position.x = tentativePos.x;
             trailer.position.z = tentativePos.z;
 
-            //updateTrailerAABBs(tentativePos); // TODO
+            //updateTrailerAABBs(tentativePos); // pedro: como nao está em camiao nao é preciso fazer nada right?
         }
     } else {
         coupleTrailerToTruck();
