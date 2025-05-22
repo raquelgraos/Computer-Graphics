@@ -56,10 +56,12 @@ function createScene() {
 
 function createCameras() {
 
+    var len = cameraPos.length;
+
     for (let i = 0; i < 2; i++) {
         if (i == 1) {
             camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000); // fov, aspect, near, far
-            camera.position.set(cameraPos[3][0], cameraPos[3][1], cameraPos[3][2]);
+            camera.position.set(cameraPos[len-1][0], cameraPos[len-1][1], cameraPos[len-1][2]);
             
         } else {
             camera = new THREE.OrthographicCamera(window.innerWidth / -5,   // left
