@@ -332,6 +332,10 @@ function checkCollisions(tentativePos) {
 ///////////////////////
 
 function handleCollisions() {
+    coupled = true;
+}
+
+function coupleTrailerToTruck() {
     var TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
 
     trailer.position.lerp(TrailerTarget, 0.005);
@@ -360,7 +364,8 @@ function update() {
             if (!checkCollisions(tentativePos)) { // false -> no collision
                 trailer.position.x = tentativePos.x;
                 trailer.position.z = tentativePos.z;
-            } else coupled = true;
+                
+            } else handleCollisions();
 
         } else { // false -> robot mode
             trailer.position.x = tentativePos.x;
@@ -368,8 +373,8 @@ function update() {
 
             //updateTrailerAABBs(tentativePos); // TODO
         }
-    } else { // -> moving to final position
-        handleCollisions();
+    } else {
+        coupleTrailerToTruck();
     }
 }
 
