@@ -301,6 +301,7 @@ function addWheel(obj, x, y, z) {
 /* CHECK TRUCK MODE */
 //////////////////////
 function checkTruckMode() {
+
     return (
         Math.abs(totalRArm.position.x + 35) < 0.01 &&
         Math.abs(totalHead.rotation.x + Math.PI / 2) < 0.01 &&
@@ -310,18 +311,20 @@ function checkTruckMode() {
 }
 
 function pipeIntersectsAABB(center, min, max) {
-        const closest = {
-            x: Math.max(min.x, Math.min(center.x, max.x)),
-            y: Math.max(min.y, Math.min(center.y, max.y)),
-            z: Math.max(min.z, Math.min(center.z, max.z))
-        };
-        const dx = center.x - closest.x;
-        const dy = center.y - closest.y;
-        const dz = center.z - closest.z;
-        return (dx * dx + dy * dy + dz * dz) <= (25);
+
+    const closest = {
+        x: Math.max(min.x, Math.min(center.x, max.x)),
+        y: Math.max(min.y, Math.min(center.y, max.y)),
+        z: Math.max(min.z, Math.min(center.z, max.z))
+    };
+    const dx = center.x - closest.x;
+    const dy = center.y - closest.y;
+    const dz = center.z - closest.z;
+    return (dx * dx + dy * dy + dz * dz) <= (25);
 }
 
 function updateAABBs(tentativePos) {
+
     const trailerHalf = { x: 50, y: 70, z: 120 };
     const robotHalf = { x: 50, y: 110, z: 80 };
 
@@ -370,7 +373,6 @@ function updateAABBs(tentativePos) {
         z: robot.position.z + totalRArm.position.z - 15
     };
 
-
     return { trailerMin, trailerMax, robotMin, robotMax, pipeLeft, pipeRight };
 }
 
@@ -387,7 +389,6 @@ function checkCollisions(tentativePos) {
         pipeRight,
     } = updateAABBs(tentativePos);
 
- 
     if (
         trailerMax.x > robotMin.x &&
         trailerMin.x < robotMax.x &&
@@ -451,8 +452,6 @@ function update() {
         } else { // false -> robot mode
             trailer.position.x = tentativePos.x;
             trailer.position.z = tentativePos.z;
-
-            //updateTrailerAABBs(tentativePos); // pedro: como nao está em camiao nao é preciso fazer nada right?
         }
     } else {
         coupleTrailerToTruck();
