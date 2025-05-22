@@ -11,6 +11,11 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";*/
 var cameras = [];
 var camera, scene, renderer;
 
+const cameraPos = new Array(new Array(0, 0, 200),       // orthographic - frontal
+                            new Array(200, 0, 0),       // orthographic - lateral
+                            new Array(0, 250, 0),       // orthographic - top
+                            new Array(500, 500, 500));  // perspective
+
 var trailer, box, append;
 var wheel;
 var robot, totalHead, head, lEye, rEye, lEar, rEar, totalLArm, totalRArm, arm, pipe, 
@@ -48,16 +53,14 @@ function createScene() {
 //////////////////////
 /* CREATE CAMERA(S) */
 //////////////////////
+
 function createCameras() {
 
-    const cameraPos = new Array(new Array(0, 0, 200),       // orthographic - frontal
-                                new Array(200, 0, 0),       // orthographic - lateral
-                                new Array(0, 250, 0),       // orthographic - top
-                                new Array(500, 500, 500));  // perspective
-
-    for (let i = 0; i < 4; i++) {
-        if (i == 3) {
+    for (let i = 0; i < 2; i++) {
+        if (i == 1) {
             camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000); // fov, aspect, near, far
+            camera.position.set(cameraPos[3][0], cameraPos[3][1], cameraPos[3][2]);
+            
         } else {
             camera = new THREE.OrthographicCamera(window.innerWidth / -5,   // left
                                             window.innerWidth / 5,          // right
@@ -65,13 +68,13 @@ function createCameras() {
                                             window.innerHeight / -5,        // bottom
                                             1,                              // near
                                             1000);                          // far
-        }
 
-        camera.position.set(cameraPos[i][0], cameraPos[i][1], cameraPos[i][2]);
+            camera.position.set(cameraPos[i][0], cameraPos[i][1], cameraPos[i][2]); // default camera is front
+        }
         camera.lookAt(scene.position);
         cameras.push(camera);
     }
-    camera = cameras[0]; // default camera is Front
+    camera = cameras[0]; // default camera is ortographic
 }
 
 ////////////////////////
@@ -486,15 +489,21 @@ function onKeyDown(e) {
     switch (e.keyCode) {
         case 49: //1
             camera = cameras[0];
+            camera.position.set(cameraPos[0][0], cameraPos[0][1], cameraPos[0][2]);
+            camera.lookAt(scene.position);
             break;
         case 50: //2
-            camera = cameras[1];
+            camera = cameras[0];
+            camera.position.set(cameraPos[1][0], cameraPos[1][1], cameraPos[1][2]);
+            camera.lookAt(scene.position);
             break;
         case 51: //3
-            camera = cameras[2];
+            camera = cameras[0];
+            camera.position.set(cameraPos[2][0], cameraPos[2][1], cameraPos[2][2]);
+            camera.lookAt(scene.position);
             break;
         case 52: //4
-            camera = cameras[3];
+            camera = cameras[1];
             break;
         case 55: //7
             materials.forEach((element) => {
