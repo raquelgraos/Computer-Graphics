@@ -32,8 +32,6 @@ let armsMovementIn = false, armsMovementOut = false, inferiorMembersMovementIn =
 
 var delta;
 
-let TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
-
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -287,16 +285,7 @@ function addWheel(obj, x, y, z) {
     obj.add(wheel);
 
 }
-////////////////////////////////////
-/* MOVE TRAILER TO FINAL POSITION */
-////////////////////////////////////
-function MoveTrailerfinal() {
-    TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
-    trailer.position.lerp(couplingTarget, 10);
-    if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
-            trailer.position.copy(TrailerTarget);
-    }
-}
+
 //////////////////////
 /* CHECK TRUCK MODE */
 //////////////////////
@@ -314,6 +303,10 @@ function checkTruckMode() {
 /* CHECK COLLISIONS */
 //////////////////////
 function checkCollisions(tentativePos) {
+    // raquel: aqui acho que é melhor fazeres so update dos AABBs e fazer aqueles testes do min/max do que estares mm a mudar a posicao
+
+    // updateTrailerAABBs(tentativePos);
+
     // Guarda a posição original do trailer
     const originalPos = trailer.position.clone();
 
@@ -327,50 +320,56 @@ function checkCollisions(tentativePos) {
     // Volta a pôr o trailer na posição original
     trailer.position.copy(originalPos);
 
-    // Se houver colisão, devolve a posição anterior (não deixa mover)
+    // If there is collision, returns true
     if (trailerBox.intersectsBox(robotBox)) {
         return true;
     }
-
-    // Se não houver colisão, aceita a nova posição
     return false;
 }
 
 ///////////////////////
 /* HANDLE COLLISIONS */ 
 ///////////////////////
+
 function handleCollisions() {
-    coupled = true;
+    var TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
+
+    trailer.position.lerp(TrailerTarget, 0.005);
+
+    if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
+        trailer.position.copy(TrailerTarget);
+    }
 }
 
 ////////////
 /* UPDATE */
 ////////////
-function update(){
+function update() {
+
     if (coupled == false) {
+
         delta = clock.getDelta();
+
         handleRobotMovements(delta);
+
         handleTrailerMovements();
         var tentativePos = updateTrailerPositions(delta);
-        if (checkTruckMode()) { //true -> truck mode
+
+        if (checkTruckMode()) { // true -> truck mode
+
             if (!checkCollisions(tentativePos)) { // false -> no collision
                 trailer.position.x = tentativePos.x;
                 trailer.position.z = tentativePos.z;
-            }
-            else{
-                handleCollisions();
-            }
-        }
-        else{ // false -> robot mode
+            } else coupled = true;
+
+        } else { // false -> robot mode
             trailer.position.x = tentativePos.x;
             trailer.position.z = tentativePos.z;
+
+            //updateTrailerAABBs(tentativePos); // TODO
         }
-    }
-    else {// -> moving to final position
-        trailer.position.lerp(TrailerTarget, 0.005);
-        if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
-            trailer.position.copy(TrailerTarget);
-        }
+    } else { // -> moving to final position
+        handleCollisions();
     }
 }
 
