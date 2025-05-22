@@ -77,6 +77,12 @@ function createCameras() {
     camera = cameras[0]; // default camera is ortographic
 }
 
+function changeOrtCameraPos(code) {
+    camera = cameras[0];
+    camera.position.set(cameraPos[code-1][0], cameraPos[code-1][1], cameraPos[code-1][2]);
+    camera.lookAt(scene.position);
+}
+
 ////////////////////////
 /* CREATE OBJECT3D(S) */
 ////////////////////////
@@ -488,19 +494,13 @@ function onKeyDown(e) {
 
     switch (e.keyCode) {
         case 49: //1
-            camera = cameras[0];
-            camera.position.set(cameraPos[0][0], cameraPos[0][1], cameraPos[0][2]);
-            camera.lookAt(scene.position);
+            changeOrtCameraPos(1);
             break;
         case 50: //2
-            camera = cameras[0];
-            camera.position.set(cameraPos[1][0], cameraPos[1][1], cameraPos[1][2]);
-            camera.lookAt(scene.position);
+            changeOrtCameraPos(2);
             break;
         case 51: //3
-            camera = cameras[0];
-            camera.position.set(cameraPos[2][0], cameraPos[2][1], cameraPos[2][2]);
-            camera.lookAt(scene.position);
+            changeOrtCameraPos(3);
             break;
         case 52: //4
             camera = cameras[1];
