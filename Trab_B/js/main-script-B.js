@@ -339,7 +339,7 @@ function updateAABBs(tentativePos) {
 
     const robotCenter = {
         x: robot.position.x,
-        y: robot.position.y + 75,
+        y: robot.position.y,
         z: robot.position.z
     };
 
