@@ -1,8 +1,8 @@
 import * as THREE from "three";
-/*import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { VRButton } from "three/addons/webxr/VRButton.js";
 import * as Stats from "three/addons/libs/stats.module.js";
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";*/
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 //////////////////////
 /* GLOBAL VARIABLES */
@@ -11,8 +11,8 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";*/
 var cameras = [];
 var camera, scene, renderer;
 
-const cameraPos = new Array(new Array(0, 0, 200),       // orthographic - frontal
-                            new Array(200, 0, 0),       // orthographic - lateral
+const cameraPos = new Array(new Array(0, 0, 250),       // orthographic - frontal
+                            new Array(250, 0, 0),       // orthographic - lateral
                             new Array(0, 250, 0),       // orthographic - top
                             new Array(500, 500, 500));  // perspective
 
@@ -46,8 +46,8 @@ function createScene() {
 
     scene.background = new THREE.Color('#ffffff');
 
-    createRobot(100, 0, 0);
-    createTrailer(-100, -5, 50);
+    createRobot(50, 0, 210);
+    createTrailer(50, -5, -130);
 }
 
 //////////////////////
@@ -64,10 +64,10 @@ function createCameras() {
             camera.position.set(cameraPos[len-1][0], cameraPos[len-1][1], cameraPos[len-1][2]);
             
         } else {
-            camera = new THREE.OrthographicCamera(window.innerWidth / -5,   // left
-                                            window.innerWidth / 5,          // right
-                                            window.innerHeight / 5,         // top
-                                            window.innerHeight / -5,        // bottom
+            camera = new THREE.OrthographicCamera(window.innerWidth / -4,   // left
+                                            window.innerWidth / 4,          // right
+                                            window.innerHeight / 4,         // top
+                                            window.innerHeight / -4,        // bottom
                                             1,                              // near
                                             1000);                          // far
 
@@ -92,7 +92,7 @@ function createMaterials() {
 
     materials.set("trailer", new THREE.MeshBasicMaterial({ color:0xa5a4a4, wireframe: false})); // gray
     materials.set("append", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
-    materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false })); // very very dark gray almost black
+    materials.set("wheel", new THREE.MeshBasicMaterial({ color: 0x161717, wireframe: false })); // very dark gray
     materials.set("head", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("eye", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
     materials.set("ear", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
@@ -100,25 +100,28 @@ function createMaterials() {
     materials.set("pipe", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
     materials.set("forearm", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // red
     materials.set("body", new THREE.MeshBasicMaterial({ color: 0xfa0000, wireframe: false })); // red
-    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
-    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitISH
+    materials.set("abdomen", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitish
+    materials.set("waist", new THREE.MeshBasicMaterial({ color: 0xe3dddc, wireframe: false })); // whitish
     materials.set("thigh", new THREE.MeshBasicMaterial({ color: 0xbabcbf, wireframe: false })); // light gray
     materials.set("leg", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
     materials.set("foot", new THREE.MeshBasicMaterial({ color: 0x152357, wireframe: false })); // dark blue
 }
 
+/*
+* The scale of the objects is 2000:1 compared to the technical sketches
+*/
 function createRobot(x, y, z) {
 
-    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 10), materials.get("waist")); // (0.04, 0.01, 0.03)
+    waist = new THREE.Mesh(new THREE.BoxGeometry(80, 20, 10), materials.get("waist"));
     waist.position.set(0, 0, 0);
 
-    abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 100), materials.get("abdomen")); // (0.02, 0.015, 0.03)
+    abdomen = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 100), materials.get("abdomen"));
     abdomen.position.set(0, 25, -45);
 
-    frontBody = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body")); // (0.05, 0.035, 0.03)
+    frontBody = new THREE.Mesh(new THREE.BoxGeometry(100, 70, 60), materials.get("body"));
     frontBody.position.set(0, 75, -25);
 
-    backBody = new THREE.Mesh(new THREE.BoxGeometry(40, 70, 40), materials.get("body")); // (0.05, 0.035, 0.03)
+    backBody = new THREE.Mesh(new THREE.BoxGeometry(40, 70, 40), materials.get("body"));
     backBody.position.set(0, 75, -75);
 
     robot = new THREE.Object3D();
@@ -192,26 +195,26 @@ function createRobot(x, y, z) {
 function buildHead(obj) {
 
     // Head
-    head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head")); // (0.02, 0.015, 0.03)
+    head = new THREE.Mesh(new THREE.BoxGeometry(40, 30, 60), materials.get("head"));
     head.position.set(0, 15, -30);
 
     obj.add(head);
 
     // Eyes
-    lEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
+    lEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye"));
     lEye.position.set(5, 15, 1);
     
-    rEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye")); // (0.0025, 0.0025, 0.0025)
+    rEye = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), materials.get("eye"));
     rEye.position.set(-5, 15, 1);
 
     obj.add(lEye);
     obj.add(rEye);
 
     // Ears
-    lEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
+    lEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear"));
     lEar.position.set(15, 35, -55);
 
-    rEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear")); // radius: 0.0025, height: 0.005
+    rEar = new THREE.Mesh(new THREE.ConeGeometry(5, 10, 10), materials.get("ear"));
     rEar.position.set(-15, 35, -55);
 
     obj.add(lEar);
@@ -221,19 +224,19 @@ function buildHead(obj) {
 function buildArm(obj, left) {
 
     // Arm
-    arm = new THREE.Mesh(new THREE.BoxGeometry(30, 100, 40), materials.get("arm")); // (0.015, 0.035, 0.02)
+    arm = new THREE.Mesh(new THREE.BoxGeometry(30, 100, 40), materials.get("arm"));
     arm.position.set(0, 0, 0);
 
     obj.add(arm);
 
     // Forearm
-    forearm = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 60), materials.get("forearm")); // (0.015, 0.015, 0.03)
+    forearm = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 60), materials.get("forearm"));
     forearm.position.set(0, -35, 50);
 
     obj.add(forearm);
 
     // Pipe
-    pipe = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 90), materials.get("pipe")); // radius top: 0.0025, radius bottom: 0.0025, height: 0.045
+    pipe = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 90), materials.get("pipe"));
     if (left) { pipe.position.set(20, 25, -15); }
     else pipe.position.set(-20, 25, -15);
 
@@ -243,7 +246,7 @@ function buildArm(obj, left) {
 function buildLeg(obj, left) {
 
     // Leg
-    leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg")); // (0.015, 0.06, 0.01)
+    leg = new THREE.Mesh(new THREE.BoxGeometry(30, 120, 20), materials.get("leg"));
     leg.position.set(0, 0, 0);
 
     obj.add(leg);
@@ -258,7 +261,7 @@ function buildLeg(obj, left) {
     }
     
     // Thigh
-    thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh")); // (0.01, 0.025, 0.005)
+    thigh = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 10), materials.get("thigh"));
     if (left) { thigh.position.set(-5, 85, 5); }
     else thigh.position.set(5, 85, 5);
 
@@ -267,10 +270,10 @@ function buildLeg(obj, left) {
 
 function createTrailer(x, y, z) {
 
-    box = new THREE.Mesh(new THREE.BoxGeometry(100, 140, 240), materials.get("trailer")); // (0.05, 0.07. 0.12) -> escala 2000:1
+    box = new THREE.Mesh(new THREE.BoxGeometry(100, 140, 240), materials.get("trailer"));
     box.position.set(0, 85, 0);
 
-    append = new THREE.Mesh(new THREE.BoxGeometry(10, 20, 10), materials.get("append")); // (0.005, 0.01, 0.005)
+    append = new THREE.Mesh(new THREE.BoxGeometry(10, 20, 10), materials.get("append"));
     append.position.set(0, 5, 105);
 
     trailer = new THREE.Object3D();
@@ -279,8 +282,8 @@ function createTrailer(x, y, z) {
 
     scene.add(trailer);
 
-    addWheel(trailer, 30, 0, -90); // (0.015, 0.0425, 0.045)
-    addWheel(trailer, 30, 0, -45); // (0.015, 0.0425, 0.0225)
+    addWheel(trailer, 30, 0, -90);
+    addWheel(trailer, 30, 0, -45);
     addWheel(trailer, -30, 0, -90);
     addWheel(trailer, -30, 0, -45);
 
@@ -289,7 +292,7 @@ function createTrailer(x, y, z) {
 
 function addWheel(obj, x, y, z) {
 
-    wheel = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 20), materials.get("wheel")); // radious top: 0.0075, radius bottom: 0.0075, height: 0.01
+    wheel = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 20), materials.get("wheel"));
     wheel.rotation.z = Math.PI / 2;
     wheel.position.set(x, y, z);
 
@@ -418,9 +421,9 @@ function handleCollisions() {
 }
 
 function coupleTrailerToTruck() {
-    var TrailerTarget = new THREE.Vector3(98.99, -5, -254.86);
+    var TrailerTarget = new THREE.Vector3(50, -5, -50);
 
-    trailer.position.lerp(TrailerTarget, 0.005);
+    trailer.position.lerp(TrailerTarget, 0.01);
 
     if (trailer.position.distanceTo(TrailerTarget) < 0.1) {
         trailer.position.copy(TrailerTarget);
@@ -459,6 +462,7 @@ function update() {
 }
 
 function handleRobotMovements(delta) {
+
     if (headMovementIn){
         totalHead.rotateX(-(Math.min(delta * 2, Math.PI / 2 + totalHead.rotation.x)));
         headMovementIn = false;
@@ -467,6 +471,7 @@ function handleRobotMovements(delta) {
         totalHead.rotateX(Math.min(delta * 2, -totalHead.rotation.x));
         headMovementOut = false;
     }
+
     if (feetMovementIn){
         feet.rotateX(Math.min(delta * 2, Math.PI / 2 - feet.rotation.x));
         feetMovementIn = false;
@@ -475,6 +480,7 @@ function handleRobotMovements(delta) {
         feet.rotateX(-(Math.min(delta * 2, feet.rotation.x)));
         feetMovementOut = false;
     }
+
     if (inferiorMembersMovementIn) {
         inferiorMembers.rotateX(Math.min(delta * 2, Math.PI / 2 - inferiorMembers.rotation.x));
         inferiorMembersMovementIn = false;
@@ -483,6 +489,7 @@ function handleRobotMovements(delta) {
         inferiorMembers.rotateX(-(Math.min(delta * 2, inferiorMembers.rotation.x)));
         inferiorMembersMovementOut = false;
     }
+
     if (armsMovementIn) {
         totalLArm.position.x = Math.max(totalLArm.position.x - delta * 40, 35);
         totalRArm.position.x = Math.min(totalRArm.position.x + delta * 40, -35);
@@ -564,45 +571,45 @@ function animate() {
 function onKeyDown(e) {
 
     switch (e.keyCode) {
-        case 49: //1
+        case 49: // 1
             changeOrtCameraPos(1);
             break;
-        case 50: //2
+        case 50: // 2
             changeOrtCameraPos(2);
             break;
-        case 51: //3
+        case 51: // 3
             changeOrtCameraPos(3);
             break;
-        case 52: //4
+        case 52: // 4
             camera = cameras[1];
             break;
-        case 55: //7
+        case 55: // 7
             materials.forEach((element) => {
                 element.wireframe = !element.wireframe;
             })
             break;
-        case 81: //q
+        case 81: // q
             feetMovementIn = true;
             break;
-        case 65: //a
+        case 65: // a
             feetMovementOut = true;
             break;
-        case 87: //w
+        case 87: // w
             inferiorMembersMovementIn = true;
             break;
-        case 83: //s
+        case 83: // s
             inferiorMembersMovementOut = true;
             break;
-        case 69: //e
+        case 69: // e
             armsMovementIn = true;
             break;
-        case 68: //d
+        case 68: // d
             armsMovementOut = true;
             break;
-        case 82: //r
+        case 82: // r
             headMovementIn = true;
             break;
-        case 70: //f
+        case 70: // f
             headMovementOut = true;
             break;
         case 37: // left arrow
