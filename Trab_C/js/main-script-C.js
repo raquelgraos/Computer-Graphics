@@ -86,6 +86,12 @@ function createLights() {
     scene.add(globalLight.target);
 }
 
+function updatePointlights() {
+    pointLights.forEach((light) => {
+                light.visible = !light.visible;
+            })
+}
+
 ////////////////////////
 /* CREATE OBJECT3D(S) */
 ////////////////////////
@@ -362,9 +368,7 @@ function onKeyDown(e) {
         case 69: // e
             break;
         case 80: // p
-            pointLights.forEach((light) => {
-                light.visible = !light.visible;
-            })
+            updatePointlights();
             break;
         case 81: // q
            break;
