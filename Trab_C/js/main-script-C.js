@@ -195,30 +195,6 @@ function createUFO(x, y, z) {
     }
 }*/
 
-function addBranch(x, y, z, rot, obj) {
-
-    var branchLen = THREE.MathUtils.randFloat(1.5, 2.5);
-    geometry = new THREE.CylinderGeometry(0.5, 0.5, branchLen);
-    mesh = new THREE.Mesh(geometry, materials.get("trunk"));
-
-    mesh.rotation.z = rot * (Math.PI/4);
-    mesh.position.set(x, y, z);
-
-    obj.add(mesh);
-}
-
-function addLeaves(x, y, z, obj) {
-
-    geometry = new THREE.SphereGeometry();
-    geometry.rotateZ(Math.PI/2);
-    geometry.scale();
-
-    mesh = new THREE.Mesh(geometry, materials.get("leaves"));
-    mesh.position.set(x, y, z);
-
-    obj.add(mesh);    
-}
-
 function createCorkOak(x, y, z) {
 
     var corkOak = new THREE.Object3D();
@@ -245,12 +221,12 @@ function createCorkOak(x, y, z) {
     corkOak.add(trunk);
 
     // branch
-    //addBranch(0, 1.5, -1, 1, corkOak);
-    //addBranch(0, strippedHeight / 2, 0.5, 1, corkOak);
-    //addBranch(0, 2.5, 1, -1, corkOak); // to be fixed
+    //addBranch(x, y, z, corkOak);
+    //addBranch(x, y, z, corkOak);
+    //addBranch(x, y, z, corkOak);
 
     // leaves
-    //addLeaves(x2, y2, z2, corkOak);
+    //addLeaves(x, y, z, corkOak);
 
     corkOak.position.set(x, y, z);
     scene.add(corkOak);
