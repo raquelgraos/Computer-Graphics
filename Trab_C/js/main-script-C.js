@@ -206,7 +206,7 @@ function createUFO(x, y, z) {
 }
 
 function populateCorkOaks() { 
-    const nTrees = 3;
+    const nTrees = 4;
     for (let i = 0; i < nTrees; i++) {
         createCorkOak(treesPositions[i][0], treesPositions[i][1], treesPositions[i][2]);
     }
