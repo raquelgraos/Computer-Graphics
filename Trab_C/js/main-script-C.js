@@ -28,6 +28,8 @@ var movementVector = new THREE.Vector3(0, 0, 0)
 const clock = new THREE.Clock();
 var delta;
 
+var helper;
+
 let leftKey = false, upKey = false, rightKey = false, downKey = false;
 
 /////////////////////
@@ -43,7 +45,7 @@ function createScene() {
 
     createMoon(25, 40, 0);
     //populateCorkOaks();
-    createHouse(-20, 0, 0);
+    createHouse(-10, -5, -3);
     createUFO(-15, 20, -4);
 }
 
@@ -103,7 +105,8 @@ function createMaterials() {
     const loader = new THREE.TextureLoader();
     const texture = loader.load('./heightmap.png');
 
-    materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
+    //materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
+    materials.set("flowerField", new THREE.MeshLambertMaterial({ color: 0xffffff }));
 
     materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
 
@@ -137,22 +140,21 @@ function createMoon(x, y, z) {
 function addLights() {
     const nLights = 8;
 
-    let angle;
     for (let i = 0; i < nLights; i++) {
 
-        geometry = new THREE.SphereGeometry(0.20, 25, 50);
+        geometry = new THREE.SphereGeometry(0.20);
         mesh = new THREE.Mesh(geometry, materials.get("light"));
         mesh.position.set(2.5, -0.2, 0);
         mesh.rotation.x = Math.PI;
 
-        var pointlight = new THREE.PointLight(0x78f556, 0.5);
+        var pointlight = new THREE.PointLight(0x78f556);
         pointLights.push(pointlight);
 
         var light = new THREE.Object3D();
         light.add(mesh);
         light.add(pointlight);
 
-        angle = i * (2 * Math.PI) / nLights;
+        var angle = i * (2 * Math.PI) / nLights;
         light.rotation.y = angle;
 
         ufo.add(light);
@@ -166,6 +168,7 @@ function createUFO(x, y, z) {
     // body
     geometry = new THREE.SphereGeometry(3, 25, 50);
     mesh = new THREE.Mesh(geometry, materials.get("ufo"));
+    mesh.position.set(0, 0, 0);
     mesh.scale.set(1, 0.2, 1);
 
     ufo.add(mesh);
@@ -182,8 +185,9 @@ function createUFO(x, y, z) {
     mesh = new THREE.Mesh(geometry, materials.get("cylinder"));
     mesh.position.set(0, -0.5, 0);
 
-    spotlight = new THREE.SpotLight(0xf5c958, 0.7);
-    spotlight.target.position.set(0, -40, 0); // FIX: não funciona idk
+    spotlight = new THREE.SpotLight(0xede0c2, 0.6, 0, Math.PI / 8);
+    spotlight.position.set(0, 0, 0);
+    spotlight.target.position.set(0, -60, 0);
 
     mesh.add(spotlight);
     mesh.add(spotlight.target);
@@ -194,6 +198,9 @@ function createUFO(x, y, z) {
 
     ufo.position.set(x, y, z);
     scene.add(ufo);
+
+    helper = new THREE.SpotLightHelper(spotlight);
+    scene.add(helper);
 }
 
 /*function populateCorkOaks() {
@@ -253,7 +260,8 @@ function createHouse(x, y, z) {
 
     buildRoof(x - 5, y, z);
 
-    house.position
+    house.position.set(x, y, z);
+    house.scale.set(1.5, 1.5, 1.5);
     scene.add(house);
 }
 
@@ -797,6 +805,8 @@ function animate() {
     update();
 
     render();
+
+    helper.update();
 
     requestAnimationFrame(animate);
 }
