@@ -15,6 +15,8 @@ var scene, camera;
 
 const materials = new Map();
 
+const treesPositions = [[-30, -10, -30], [30, -10, -30], [-30, -10, 30], [30, -10, 30]]; //TODO
+
 var geometry, mesh;
 var flowerField;
 var moon, ufo, house;
@@ -44,7 +46,7 @@ function createScene() {
     createFlowerField(0, -20, 10);
 
     createMoon(25, 40, 0);
-    //populateCorkOaks();
+    populateCorkOaks();
     createHouse(-10, -5, -3);
     createUFO(-15, 20, -4);
 }
@@ -203,50 +205,102 @@ function createUFO(x, y, z) {
     scene.add(helper);
 }
 
-/*function populateCorkOaks() {
-    
+function populateCorkOaks() { 
     const nTrees = 3;
-
     for (let i = 0; i < nTrees; i++) {
-        createCorkOak();
+        createCorkOak(treesPositions[i][0], treesPositions[i][1], treesPositions[i][2]);
     }
-}*/
+}
 
 function createCorkOak(x, y, z) {
-
     var corkOak = new THREE.Object3D();
-
-    var trunk = new THREE.Object3D();
 
     // stripped trunk
     var strippedHeight = THREE.MathUtils.randFloat(4, 6.5);
     geometry = new THREE.CylinderGeometry(0.9, 0.9, strippedHeight);
     mesh = new THREE.Mesh(geometry, materials.get("stripped trunk"));
 
-    trunk.add(mesh);
+    corkOak.add(mesh);
 
     // trunk
-    var trunkHeight = strippedHeight / 2;
+    var trunkHeight = strippedHeight * 1.5;
     geometry = new THREE.CylinderGeometry(1, 1, trunkHeight);
     mesh = new THREE.Mesh(geometry, materials.get("trunk"));
-    mesh.position.set(0, strippedHeight / 2, 0)
+    mesh.position.set(0, strippedHeight/2 + trunkHeight/2, 0)
+    
+    corkOak.add(mesh);
 
-    trunk.add(mesh);
+    corkOak.rotation.z = Math.PI/12;
+    corkOak.rotation.y = Math.random()*Math.PI*2;
 
-    trunk.rotation.z = THREE.MathUtils.degToRad(15);
-
-    corkOak.add(trunk);
-
-    // branch
-    //addBranch(x, y, z, corkOak);
-    //addBranch(x, y, z, corkOak);
-    //addBranch(x, y, z, corkOak);
-
-    // leaves
-    //addLeaves(x, y, z, corkOak);
+    // branches
+    addBranches(corkOak, strippedHeight);
 
     corkOak.position.set(x, y, z);
     scene.add(corkOak);
+}
+
+function addBranches(obj, h) {
+    // lower branch
+    var lowerBranch = new THREE.Object3D();
+    createBranch(lowerBranch);
+
+    lowerBranch.position.set(-(Math.cos(Math.PI/4) * 2.5), h, 0); // branch distance from tree = cos pi/4 * branch height/2
+    lowerBranch.rotation.z = Math.PI/4;
+
+    var lowerLeaves = new THREE.Object3D();
+    createLeaves(lowerLeaves);
+
+    lowerLeaves.rotation.z = -Math.PI/4;
+    lowerBranch.add(lowerLeaves);
+
+    obj.add(lowerBranch);
+
+
+    // middle branch
+    var middleBranch = new THREE.Object3D();
+    createBranch(middleBranch);
+
+    middleBranch.position.set(Math.cos(Math.PI/4) *2.5, 3*h/2, 0);
+    middleBranch.rotation.z = -Math.PI/4;
+
+    var middleLeaves = new THREE.Object3D();
+    createLeaves(middleLeaves);
+
+    middleLeaves.rotation.z = Math.PI/4;
+    middleBranch.add(middleLeaves);
+
+    obj.add(middleBranch);
+
+
+    // upper branch
+    var upperBranch = new THREE.Object3D();
+    createBranch(upperBranch);
+
+    upperBranch.position.set(Math.cos(Math.PI/4) * 2.5, 2*h + 1.5, 0);
+    upperBranch.rotation.z = -Math.PI/4;
+
+    var upperLeaves = new THREE.Object3D();
+    createLeaves(upperLeaves);
+
+    upperLeaves.rotation.z = Math.PI/4;
+    upperBranch.add(upperLeaves);
+
+    obj.add(upperBranch);
+}
+
+function createBranch(obj) {
+    geometry = new THREE.CylinderGeometry(0.5, 0.5, 5);
+    mesh = new THREE.Mesh(geometry, materials.get("trunk"));
+    obj.add(mesh);
+}
+
+function createLeaves(obj){
+    geometry = new THREE.SphereGeometry(1.25, 32, 32);
+    geometry.scale(2, 1, 1);
+    mesh = new THREE.Mesh(geometry, materials.get("leaves"));
+    obj.add(mesh);
+    obj.position.set(0, 2.5, 0);
 }
 
 function createHouse(x, y, z) {
