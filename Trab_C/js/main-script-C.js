@@ -44,6 +44,7 @@ function createScene() {
     scene.background = new THREE.Color('#4a4a4a');
 
     createFlowerField(0, -20, 10);
+    createSkydome();
 
     createMoon(25, 40, 0);
     populateCorkOaks();
@@ -52,9 +53,21 @@ function createScene() {
 }
 
 function createFlowerField(x, y, z) {
+    const loader = new THREE.TextureLoader();
+    const heightmap = loader.load('./heightmap.png');
+    const flowerTexture = generateFlowerFieldTexture();
+
+    // Cria o material com heightmap e textura floral
+    const terrainMaterial = new THREE.MeshPhongMaterial({
+        map: flowerTexture,
+        displacementMap: heightmap,
+        displacementScale: 20, // ajusta conforme necessário
+        bumpMap: heightmap,
+        bumpScale: 5
+    });
 
     geometry = new THREE.PlaneGeometry(200, 150, 100, 100);
-    mesh = new THREE.Mesh(geometry, materials.get("flowerField"));
+    mesh = new THREE.Mesh(geometry, terrainMaterial);
 
     flowerField = new THREE.Object3D();
     flowerField.add(mesh);
@@ -63,6 +76,79 @@ function createFlowerField(x, y, z) {
     flowerField.position.set(x, y, z);
     scene.add(flowerField);
 
+    // Guarda referência ao material para troca de textura (teclas 1/2)
+    materials.set("terrain", terrainMaterial);
+}
+
+function createSkydome() {
+    const skyTexture = generateStarSkyTexture();
+    const skyGeo = new THREE.SphereGeometry(85, 64, 64);
+    const skyMat = new THREE.MeshBasicMaterial({
+        map: skyTexture,
+        side: THREE.BackSide
+    });
+    const skydome = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(skydome);
+
+    // Guarda referência ao material para troca de textura (teclas 1/2)
+    materials.set("skydome", skyMat);
+}
+
+//////////////////////
+/* CREATE TEXTURES  */
+//////////////////////
+
+function generateFlowerFieldTexture(size = 1024, nFlowers = 400) {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo verde-claro
+    ctx.fillStyle = '#a8e063';
+    ctx.fillRect(0, 0, size, size);
+
+    // Cores das flores
+    const colors = ['#ffffff', '#ffe066', '#cdb4f6', '#a2d5f2'];
+
+    for (let i = 0; i < nFlowers; i++) {
+        const x = Math.random() * size;
+        const y = Math.random() * size;
+        const r = 3 + Math.random() * 2;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+        ctx.globalAlpha = 0.85 + Math.random() * 0.15;
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+    return new THREE.CanvasTexture(canvas);
+}
+
+function generateStarSkyTexture(size = 1024, nStars = 400) {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo degradé azul-escuro para violeta-escuro
+    const grad = ctx.createLinearGradient(0, 0, 0, size);
+    grad.addColorStop(0, '#0a174e');
+    grad.addColorStop(1, '#3c096c');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+
+    // Estrelas brancas
+    for (let i = 0; i < nStars; i++) {
+        const x = Math.random() * size;
+        const y = Math.random() * size;
+        const r = 1 + Math.random() * 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = 0.7 + Math.random() * 0.3;
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+    return new THREE.CanvasTexture(canvas);
 }
 
 //////////////////////
@@ -77,6 +163,18 @@ function createCameras() {
     camera.lookAt(scene.position);
 
     cameras.push(camera);
+}
+
+function setFlowerFieldTexture() {
+    const flowerTexture = generateFlowerFieldTexture();
+    materials.get("terrain").map = flowerTexture;
+    materials.get("terrain").map.needsUpdate = true;
+}
+
+function setStarSkyTexture() {
+    const skyTexture = generateStarSkyTexture();
+    materials.get("skydome").map = skyTexture;
+    materials.get("skydome").map.needsUpdate = true;
 }
 
 /////////////////////
@@ -105,11 +203,10 @@ function updatePointlights() {
 
 function createMaterials() {
     const loader = new THREE.TextureLoader();
+    const flowerTexture = generateFlowerFieldTexture();
     const texture = loader.load('./heightmap.png');
 
     //materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
-    materials.set("flowerField", new THREE.MeshLambertMaterial({ color: 0xffffff }));
-
     materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
 
     materials.set("stripped trunk", new THREE.MeshBasicMaterial({ color: 0xa14a0d })); // orange brown
@@ -897,6 +994,12 @@ function onKeyDown(e) {
         case 40: // down arrow
             downKey = true;
             break;
+        case 49: // '1' - Campo floral
+            setFlowerFieldTexture();
+            break;
+        case 50: // '2' - Céu estrelado
+            setStarSkyTexture();
+            break;   
         case 55: // 7
             camera = cameras[0];
             break;
