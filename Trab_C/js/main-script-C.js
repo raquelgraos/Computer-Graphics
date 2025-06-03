@@ -124,15 +124,15 @@ function generateFlowerFieldTexture(size = 1024, nFlowers = 400) {
     return new THREE.CanvasTexture(canvas);
 }
 
-function generateStarSkyTexture(size = 1024, nStars = 400) {
+function generateStarSkyTexture(size = 1024, nStars = 500) {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
 
-    // Fundo degradé azul-escuro para violeta-escuro
+    // Fundo degradé azul-escuro para azul-médio
     const grad = ctx.createLinearGradient(0, 0, 0, size);
-    grad.addColorStop(0, '#0a174e');
-    grad.addColorStop(1, '#3c096c');
+    grad.addColorStop(0, '#12a5f5'); // azul claro em cima
+    grad.addColorStop(1, '#fa148c'); // roxo escuro em baixo
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, size, size);
 
@@ -140,7 +140,7 @@ function generateStarSkyTexture(size = 1024, nStars = 400) {
     for (let i = 0; i < nStars; i++) {
         const x = Math.random() * size;
         const y = Math.random() * size;
-        const r = 1 + Math.random() * 1.5;
+        const r = 1 + Math.random() * 0.25;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, 2 * Math.PI);
         ctx.fillStyle = '#ffffff';
