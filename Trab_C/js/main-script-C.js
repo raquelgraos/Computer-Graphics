@@ -46,7 +46,7 @@ function createScene() {
     createFlowerField(0, -20, 10);
     createSkydome();
 
-    createMoon(25, 40, 0);
+    createMoon(25, 35, 0);
     populateCorkOaks();
     createHouse(-10, -5, -3);
     createUFO(-15, 20, -4);
@@ -159,7 +159,7 @@ function createCameras() {
 
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera.position.set(80, 55, 80);
+    camera.position.set(80, 45, 80);
     camera.lookAt(scene.position);
 
     cameras.push(camera);
@@ -273,7 +273,7 @@ function createUFO(x, y, z) {
     ufo.add(mesh);
 
     // cockpit
-    geometry = new THREE.SphereGeometry(1, 25, 50, 0, 2 * Math.PI, 0, 0.5 * Math.PI);
+    geometry = new THREE.SphereGeometry(1, 25, 50);
     mesh = new THREE.Mesh(geometry, materials.get("cockpit"));
     mesh.position.set(0, 0.5, 0);
 
