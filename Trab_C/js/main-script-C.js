@@ -54,7 +54,7 @@ function createScene() {
 
 function createFlowerField(x, y, z) {
     const loader = new THREE.TextureLoader();
-    const heightmap = loader.load('./heightmap.png');
+    const heightmap = loader.load('./js/heightmap.png'); // Caminho corrigido
     const flowerTexture = generateFlowerFieldTexture();
 
     // Cria o material com heightmap e textura floral
@@ -204,7 +204,7 @@ function updatePointlights() {
 function createMaterials() {
     const loader = new THREE.TextureLoader();
     const flowerTexture = generateFlowerFieldTexture();
-    const texture = loader.load('./heightmap.png');
+    const heightmap = loader.load('./js/heightmap.png'); // Caminho corrigido
 
     //materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
     materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
