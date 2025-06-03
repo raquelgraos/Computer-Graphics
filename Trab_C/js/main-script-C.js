@@ -54,14 +54,14 @@ function createScene() {
 
 function createFlowerField(x, y, z) {
     const loader = new THREE.TextureLoader();
-    const heightmap = loader.load('./js/heightmap.png'); // Caminho corrigido
+    const heightmap = loader.load('./js/heightmap.png');
     const flowerTexture = generateFlowerFieldTexture();
 
-    // Cria o material com heightmap e textura floral
+    // Creates material with heighmap and floral texture
     const terrainMaterial = new THREE.MeshPhongMaterial({
         map: flowerTexture,
         displacementMap: heightmap,
-        displacementScale: 20, // ajusta conforme necessário
+        displacementScale: 20,
         bumpMap: heightmap,
         bumpScale: 5
     });
@@ -76,7 +76,7 @@ function createFlowerField(x, y, z) {
     flowerField.position.set(x, y, z);
     scene.add(flowerField);
 
-    // Guarda referência ao material para troca de textura (teclas 1/2)
+    // Stores material for texture change (key '1')
     materials.set("terrain", terrainMaterial);
 }
 
@@ -90,7 +90,7 @@ function createSkydome() {
     const skydome = new THREE.Mesh(skyGeo, skyMat);
     scene.add(skydome);
 
-    // Guarda referência ao material para troca de textura (teclas 1/2)
+    // Stores material for texture change (key '2')
     materials.set("skydome", skyMat);
 }
 
@@ -103,11 +103,10 @@ function generateFlowerFieldTexture(size = 1024, nFlowers = 400) {
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
 
-    // Fundo verde-claro
-    ctx.fillStyle = '#a8e063';
+    ctx.fillStyle = '#a8e063'; // light green
     ctx.fillRect(0, 0, size, size);
 
-    // Cores das flores
+    // Flowers' colors
     const colors = ['#ffffff', '#ffe066', '#cdb4f6', '#a2d5f2'];
 
     for (let i = 0; i < nFlowers; i++) {
@@ -129,14 +128,14 @@ function generateStarSkyTexture(size = 1024, nStars = 500) {
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
 
-    // Fundo degradé azul-escuro para azul-médio
+    // Blue to violet gradient
     const grad = ctx.createLinearGradient(0, 0, 0, size);
-    grad.addColorStop(0, '#12a5f5'); // azul claro em cima
-    grad.addColorStop(1, '#fa148c'); // roxo escuro em baixo
+    grad.addColorStop(0, '#12a5f5'); // light blue on top
+    grad.addColorStop(1, '#fa148c'); // lilac on bottom
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, size, size);
 
-    // Estrelas brancas
+    // White stars
     for (let i = 0; i < nStars; i++) {
         const x = Math.random() * size;
         const y = Math.random() * size;
@@ -202,11 +201,6 @@ function updatePointlights() {
 ////////////////////////
 
 function createMaterials() {
-    const loader = new THREE.TextureLoader();
-    const flowerTexture = generateFlowerFieldTexture();
-    const heightmap = loader.load('./js/heightmap.png'); // Caminho corrigido
-
-    //materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
     materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
 
     materials.set("stripped trunk", new THREE.MeshLambertMaterial({ color: 0xa14a0d })); // orange brown
