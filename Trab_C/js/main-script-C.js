@@ -379,6 +379,8 @@ function addBranches(obj, h) {
 
     var upperLeaves = new THREE.Object3D();
     createLeaves(upperLeaves);
+    geometry.scale(2, 3, 2);                // upper Leaves are bigger
+    upperLeaves.position.set(0, 4, 0)
 
     upperLeaves.rotation.z = Math.PI/4;
     upperBranch.add(upperLeaves);
@@ -394,7 +396,7 @@ function createBranch(obj) {
 
 function createLeaves(obj){
     geometry = new THREE.SphereGeometry(1.25, 32, 32);
-    geometry.scale(2, 1, 1);
+    geometry.scale(2, 1, 3);
     mesh = new THREE.Mesh(geometry, materials.get("leaves"));
     obj.add(mesh);
     obj.position.set(0, 2.5, 0);
