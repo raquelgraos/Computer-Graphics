@@ -209,9 +209,9 @@ function createMaterials() {
     //materials.set("flowerField", new THREE.MeshPhongMaterial({ bumpMap: texture, bumpScale: 5, displacementMap: texture, displacementScale: 20 }));
     materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
 
-    materials.set("stripped trunk", new THREE.MeshBasicMaterial({ color: 0xa14a0d })); // orange brown
-    materials.set("trunk", new THREE.MeshBasicMaterial({ color: 0x3d1c05 })); // dark brown
-    materials.set("leaves", new THREE.MeshBasicMaterial({ color: 0x1b3d05 })); // dark green
+    materials.set("stripped trunk", new THREE.MeshLambertMaterial({ color: 0xa14a0d })); // orange brown
+    materials.set("trunk", new THREE.MeshLambertMaterial({ color: 0x3d1c05 })); // dark brown
+    materials.set("leaves", new THREE.MeshLambertMaterial({ color: 0x1b3d05 })); // dark green
 
     materials.set("ufo", new THREE.MeshLambertMaterial({ color: 0x666464 })); // dark gray
     materials.set("cockpit", new THREE.MeshLambertMaterial({ color: 0x808080 }));  // gray
@@ -246,7 +246,7 @@ function addLights() {
         mesh.position.set(2.5, -0.2, 0);
         mesh.rotation.x = Math.PI;
 
-        var pointlight = new THREE.PointLight(0x78f556);
+        var pointlight = new THREE.PointLight(0x78f556, 5, 50, 1.5);
         pointLights.push(pointlight);
 
         var light = new THREE.Object3D();
@@ -284,9 +284,9 @@ function createUFO(x, y, z) {
     mesh = new THREE.Mesh(geometry, materials.get("cylinder"));
     mesh.position.set(0, -0.5, 0);
 
-    spotlight = new THREE.SpotLight(0xede0c2, 0.6, 0, Math.PI / 8);
-    spotlight.position.set(0, 0, 0);
-    spotlight.target.position.set(0, -60, 0);
+    spotlight = new THREE.SpotLight(0xffffff, 2, 100, Math.PI/8, 0, 0);
+    spotlight.position.set(0, -0.5, 0);
+    spotlight.target.position.set(0, -40, 0);
 
     mesh.add(spotlight);
     mesh.add(spotlight.target);
@@ -297,9 +297,6 @@ function createUFO(x, y, z) {
 
     ufo.position.set(x, y, z);
     scene.add(ufo);
-
-    helper = new THREE.SpotLightHelper(spotlight);
-    scene.add(helper);
 }
 
 function populateCorkOaks() { 
@@ -958,8 +955,6 @@ function animate() {
     update();
 
     render();
-
-    helper.update();
 
     requestAnimationFrame(animate);
 }
