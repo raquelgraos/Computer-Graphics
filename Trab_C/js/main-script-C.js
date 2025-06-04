@@ -398,14 +398,14 @@ function createHouse(x, y, z) {
     house = new THREE.Object3D();
 
     buildFrontAndBackWalls(x, y, z);
-    buildSideWalls(x - 5, y, z + 11);
+    buildSideWalls(x - 10, y, z + 22);
 
     buildWindowsAndDoor(x, y, z);
 
-    buildRoof(x - 5, y, z);
+    buildRoof(x - 10, y, z);
 
     house.position.set(x, y, z);
-    house.scale.set(1.5, 1.5, 1.5);
+    //house.scale.set(1.5, 1.5, 1.5);
     scene.add(house);
 }
 
@@ -417,9 +417,9 @@ function buildSideWalls(x, y, z) {
 
     var vertices = new Float32Array([
         0, 0, 0,  // bottom left (0)
-        2, 0, 0,  // bottom right (1)
-        0, 5, 0,  // top left (2)
-        2, 5, 0   // top right (3)
+        4, 0, 0,  // bottom right (1)
+        0, 10, 0,  // top left (2)
+        4, 10, 0   // top right (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -436,10 +436,10 @@ function buildSideWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        2, 0, 0,  // bottom left (0)
-        3, 0, 0,  // bottom right (1)
-        2, 2, 0,  // top right (2)
-        3, 2, 0   // top left (3)
+        4, 0, 0,  // bottom left (0)
+        6, 0, 0,  // bottom right (1)
+        4, 4, 0,  // top right (2)
+        6, 4, 0   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -451,10 +451,10 @@ function buildSideWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        2, 3, 0,  // bottom left (0)
-        3, 3, 0,  // bottom right (1)
-        2, 5, 0,   // top right (2)
-        3, 5, 0,  // top left (3)
+        4, 6, 0,  // bottom left (0)
+        6, 6, 0,  // bottom right (1)
+        4, 10, 0,   // top right (2)
+        6, 10, 0,  // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -466,10 +466,10 @@ function buildSideWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        3, 0, 0,  // bottom left (0)
-        5, 0, 0,  // bottom right (1)
-        3, 5, 0,   // top right (2)
-        5, 5, 0,  // top left (3)
+        6, 0, 0,  // bottom left (0)
+        10, 0, 0,  // bottom right (1)
+        6, 10, 0,   // top right (2)
+        10, 10, 0,  // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -489,9 +489,9 @@ function buildSideWalls(x, y, z) {
 
     vertices = new Float32Array([
         0, 0, 0,
-        5, 0, 0,
-        0, 5, 0,
-        5, 5, 0
+        10, 0, 0,
+        0, 10, 0,
+        5, 10, 0
     ])
 
     geometry = new THREE.BufferGeometry();
@@ -514,9 +514,9 @@ function buildFrontAndBackWalls(x, y, z) {
 
     var vertices = new Float32Array([
         0, 0, 0,  // bottom right (0)
-        0, 0, 2,  // bottom left (1)
-        0, 5, 0,  // top right (2)
-        0, 5, 2   // top left (3)
+        0, 0, 4,  // bottom left (1)
+        0, 10, 0,  // top right (2)
+        0, 10, 4   // top left (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -533,10 +533,10 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 2,  // bottom right (0)
-        0, 0, 3,  // bottom left (1)
-        0, 2, 2,  // top right (2)
-        0, 2, 3   // top left (3)
+        0, 0, 4,  // bottom right (0)
+        0, 0, 6,  // bottom left (1)
+        0, 4, 4,  // top right (2)
+        0, 4, 6   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -548,40 +548,10 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 3, 2,  // bottom right (0)
-        0, 3, 3,  // bottom left (1)
-        0, 5, 2,  // top right (2)
-        0, 5, 3   // top left (3)
-    ]);
-
-    geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.setIndex(indexes);
-    geometry.computeVertexNormals();
-
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
-    wall.add(mesh);
-
-    vertices = new Float32Array([
-        0, 0, 3,  // bottom right (0)
-        0, 0, 5,  // bottom left (1)
-        0, 5, 3,  // top right (2)
-        0, 5, 5   // top left (3)
-    ]);
-
-    geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.setIndex(indexes);
-    geometry.computeVertexNormals();
-
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
-    wall.add(mesh);
-
-    vertices = new Float32Array([
-        0, 3, 5,  // bottom right (0)
-        0, 3, 6,  // bottom left (1)
-        0, 5, 5,  // top right (2)
-        0, 5, 6   // top left (3)
+        0, 6, 4,  // bottom right (0)
+        0, 6, 6,  // bottom left (1)
+        0, 10, 4,  // top right (2)
+        0, 10, 6   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -594,9 +564,9 @@ function buildFrontAndBackWalls(x, y, z) {
 
     vertices = new Float32Array([
         0, 0, 6,  // bottom right (0)
-        0, 0, 8,  // bottom left (1)
-        0, 5, 6,  // top right (2)
-        0, 5, 8   // top left (3)
+        0, 0, 10,  // bottom left (1)
+        0, 10, 6,  // top right (2)
+        0, 10, 10   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -608,10 +578,10 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 8,  // bottom right (0)
-        0, 0, 9,  // bottom left (1)
-        0, 2, 8,  // top right (2)
-        0, 2, 9   // top left (3)
+        0, 6, 10,  // bottom right (0)
+        0, 6, 12,  // bottom left (1)
+        0, 10, 10,  // top right (2)
+        0, 10, 12   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -623,10 +593,10 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 3, 8,  // bottom right (0)
-        0, 3, 9,  // bottom left (1)
-        0, 5, 8,  // top right (2)
-        0, 5, 9   // top left (3)
+        0, 0, 12,  // bottom right (0)
+        0, 0, 16,  // bottom left (1)
+        0, 10, 12,  // top right (2)
+        0, 10, 16   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -638,10 +608,40 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 9,  // bottom right (0)
-        0, 0, 11,  // bottom left (1)
-        0, 5, 9,  // top right (2)
-        0, 5, 11   // top left (3)
+        0, 0, 16,  // bottom right (0)
+        0, 0, 18,  // bottom left (1)
+        0, 4, 16,  // top right (2)
+        0, 4, 18   // top left (3)
+    ]);
+
+    geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setIndex(indexes);
+    geometry.computeVertexNormals();
+
+    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    wall.add(mesh);
+
+    vertices = new Float32Array([
+        0, 6, 16,  // bottom right (0)
+        0, 6, 18,  // bottom left (1)
+        0, 10, 16,  // top right (2)
+        0, 10, 18   // top left (3)
+    ]);
+
+    geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.setIndex(indexes);
+    geometry.computeVertexNormals();
+
+    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    wall.add(mesh);
+
+    vertices = new Float32Array([
+        0, 0, 18,  // bottom right (0)
+        0, 0, 22,  // bottom left (1)
+        0, 10, 18,  // top right (2)
+        0, 10, 22   // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -661,9 +661,9 @@ function buildFrontAndBackWalls(x, y, z) {
 
     vertices = new Float32Array([
         0, 0, 0,
-        0, 0, 11,
-        0, 5, 0,
-        0, 5, 11
+        0, 0, 22,
+        0, 10, 0,
+        0, 10, 22
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -674,7 +674,7 @@ function buildFrontAndBackWalls(x, y, z) {
     mesh = new THREE.Mesh(geometry, materials.get("walls"));
     wall.add(mesh);
 
-    wall.position.set(x - 5, y, z);
+    wall.position.set(x - 10, y, z);
     house.add(wall);
 }
 
@@ -685,10 +685,10 @@ function buildWindowsAndDoor(x, y, z) {
     var window = new THREE.Group();
 
     var vertices = new Float32Array([
-        2, 2, 0, // bottom left (0)
-        3, 2, 0, // bottom right (1)
-        2, 3, 0, // top left (2)
-        3, 3, 0  // top right (3)
+        4, 4, 0, // bottom left (0)
+        6, 4, 0, // bottom right (1)
+        4, 6, 0, // top left (2)
+        6, 6, 0  // top right (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -704,7 +704,7 @@ function buildWindowsAndDoor(x, y, z) {
     mesh = new THREE.Mesh(geometry, materials.get("window"));
     window.add(mesh);
 
-    window.position.set(x - 5, y, z + 11);
+    window.position.set(x - 10, y, z + 22);
     house.add(window);
 
     // Front windows
@@ -712,10 +712,10 @@ function buildWindowsAndDoor(x, y, z) {
     window = new THREE.Group();
 
     vertices = new Float32Array([
-        0, 2, 2, // bottom right (0)
-        0, 2, 3, // bottom left (1)
-        0, 3, 2, // top right (2)
-        0, 3, 3  // top left (3)
+        0, 4, 4, // bottom right (0)
+        0, 4, 6, // bottom left (1)
+        0, 6, 4, // top right (2)
+        0, 6, 6  // top left (3)
     ]);
 
     indexes = [ // anti clockwise
@@ -734,10 +734,10 @@ function buildWindowsAndDoor(x, y, z) {
     window.position.set(x, y, z);
 
     vertices = new Float32Array([
-        0, 2, 8, // bottom right (0)
-        0, 2, 9, // bottom left (1)
-        0, 3, 8, // top right (2)
-        0, 3, 9  // top left (3)
+        0, 4, 16, // bottom right (0)
+        0, 4, 18, // bottom left (1)
+        0, 6, 16, // top right (2)
+        0, 6, 18  // top left (3)
     ]);
 
     indexes = [
@@ -762,10 +762,10 @@ function buildWindowsAndDoor(x, y, z) {
     var door = new THREE.Group();
 
     vertices = new Float32Array([
-        0, 0, 5, // bottom right (0)
-        0, 0, 6, // bottom left (1)
-        0, 3, 5, // top right (2)
-        0, 3, 6  // top left (3)
+        0, 0, 10, // bottom right (0)
+        0, 0, 12, // bottom left (1)
+        0, 6, 10, // top right (2)
+        0, 6, 12  // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -788,10 +788,10 @@ function buildRoof(x, y, z) {
 
     // Not visible 
     var vertices = new Float32Array([
-        0, 5, 0,    // bottom left (0)
-        0, 5, 11,   // bottom right (1)
-        2.5, 7, 0,  // top left (2)
-        2.5, 7, 11  // top right (3)
+        0, 10, 0,    // bottom left (0)
+        0, 10, 22,   // bottom right (1)
+        5, 14, 0,  // top left (2)
+        5, 14, 22  // top right (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -810,10 +810,10 @@ function buildRoof(x, y, z) {
     // Visible
 
     vertices = new Float32Array([
-        2.5, 7, 0,  // bottom left (0)
-        2.5, 7, 11, // bottom right (1)
-        5, 5, 0,    // top left (2)
-        5, 5, 11    // top right (3)
+        5, 14, 0,  // bottom left (0)
+        5, 14, 22, // bottom right (1)
+        10, 10, 0,    // top left (2)
+        10, 10, 22    // top right (3)
     ]); 
 
     geometry = new THREE.BufferGeometry();
@@ -827,9 +827,9 @@ function buildRoof(x, y, z) {
     // Not visible
 
     vertices = new Float32Array([
-        0, 5, 0,   // bottom left (0)
-        2.5, 7, 0, // top (1)
-        5, 5, 0    // bottom right (2)
+        0, 10, 0,   // bottom left (0)
+        5, 14, 0, // top (1)
+        10, 10, 0    // bottom right (2)
     ]);  
 
     indexes = [ // anti clockwise
@@ -847,9 +847,9 @@ function buildRoof(x, y, z) {
     // Visible
 
     vertices = new Float32Array([
-        0, 5, 11,   // bottom left (0)
-        2.5, 7, 11, // top (1)
-        5, 5, 11    // bottom right (2)
+        0, 10, 22,   // bottom left (0)
+        5, 14, 22, // top (1)
+        10, 10, 22   // bottom right (2)
     ]);  
 
     geometry = new THREE.BufferGeometry();
@@ -994,22 +994,22 @@ function onKeyDown(e) {
         case 55: // 7
             camera = cameras[0];
             break;
+        case 69: // e
+            break;
+        case 81: // q
+            break;
+        case 87: // w
+            break;
         case 68: // d
             globalLight.visible = !globalLight.visible;
             break;
-        case 69: // e
-            break;
         case 80: // p
             updatePointlights();
-            break;
-        case 81: // q
             break;
         case 82: // r
             break;
         case 83: // s
             spotlight.visible = !spotlight.visible;
-            break;
-        case 87: // w
             break;
     }
 }
