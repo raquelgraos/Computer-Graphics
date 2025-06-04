@@ -405,7 +405,6 @@ function createHouse(x, y, z) {
     buildRoof(x - 10, y, z);
 
     house.position.set(x, y, z);
-    //house.scale.set(1.5, 1.5, 1.5);
     scene.add(house);
 }
 
@@ -513,10 +512,10 @@ function buildFrontAndBackWalls(x, y, z) {
     var wall = new THREE.Group();
 
     var vertices = new Float32Array([
-        0, 0, 0,  // bottom right (0)
-        0, 0, 4,  // bottom left (1)
-        0, 10, 0,  // top right (2)
-        0, 10, 4   // top left (3)
+        0, 0, 0,    // bottom right (0)
+        0, 0, 4,    // bottom left (1)
+        0, 10, 0,   // top right (2)
+        0, 10, 4    // top left (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -548,10 +547,10 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 6, 4,  // bottom right (0)
-        0, 6, 6,  // bottom left (1)
-        0, 10, 4,  // top right (2)
-        0, 10, 6   // top left (3)
+        0, 6, 4,    // bottom right (0)
+        0, 6, 6,    // bottom left (1)
+        0, 10, 4,   // top right (2)
+        0, 10, 6    // top left (3)
     ]);
 
     geometry = new THREE.BufferGeometry();
@@ -563,9 +562,9 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 6,  // bottom right (0)
-        0, 0, 10,  // bottom left (1)
-        0, 10, 6,  // top right (2)
+        0, 0, 6,    // bottom right (0)
+        0, 0, 10,   // bottom left (1)
+        0, 10, 6,   // top right (2)
         0, 10, 10   // top left (3)
     ]);
 
@@ -578,8 +577,8 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 6, 10,  // bottom right (0)
-        0, 6, 12,  // bottom left (1)
+        0, 6, 10,   // bottom right (0)
+        0, 6, 12,   // bottom left (1)
         0, 10, 10,  // top right (2)
         0, 10, 12   // top left (3)
     ]);
@@ -593,8 +592,8 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 12,  // bottom right (0)
-        0, 0, 16,  // bottom left (1)
+        0, 0, 12,   // bottom right (0)
+        0, 0, 16,   // bottom left (1)
         0, 10, 12,  // top right (2)
         0, 10, 16   // top left (3)
     ]);
@@ -623,8 +622,8 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 6, 16,  // bottom right (0)
-        0, 6, 18,  // bottom left (1)
+        0, 6, 16,   // bottom right (0)
+        0, 6, 18,   // bottom left (1)
         0, 10, 16,  // top right (2)
         0, 10, 18   // top left (3)
     ]);
@@ -638,8 +637,8 @@ function buildFrontAndBackWalls(x, y, z) {
     wall.add(mesh);
 
     vertices = new Float32Array([
-        0, 0, 18,  // bottom right (0)
-        0, 0, 22,  // bottom left (1)
+        0, 0, 18,   // bottom right (0)
+        0, 0, 22,   // bottom left (1)
         0, 10, 18,  // top right (2)
         0, 10, 22   // top left (3)
     ]);
@@ -788,10 +787,10 @@ function buildRoof(x, y, z) {
 
     // Not visible 
     var vertices = new Float32Array([
-        0, 10, 0,    // bottom left (0)
-        0, 10, 22,   // bottom right (1)
-        5, 14, 0,  // top left (2)
-        5, 14, 22  // top right (3)
+        0, 10, 0,   // bottom left (0)
+        0, 10, 22,  // bottom right (1)
+        5, 14, 0,   // top left (2)
+        5, 14, 22   // top right (3)
     ]);
 
     var indexes = [ // anti clockwise
@@ -810,10 +809,10 @@ function buildRoof(x, y, z) {
     // Visible
 
     vertices = new Float32Array([
-        5, 14, 0,  // bottom left (0)
-        5, 14, 22, // bottom right (1)
-        10, 10, 0,    // top left (2)
-        10, 10, 22    // top right (3)
+        5, 14, 0,   // bottom left (0)
+        5, 14, 22,  // bottom right (1)
+        10, 10, 0,  // top left (2)
+        10, 10, 22  // top right (3)
     ]); 
 
     geometry = new THREE.BufferGeometry();
@@ -828,8 +827,8 @@ function buildRoof(x, y, z) {
 
     vertices = new Float32Array([
         0, 10, 0,   // bottom left (0)
-        5, 14, 0, // top (1)
-        10, 10, 0    // bottom right (2)
+        5, 14, 0,   // top (1)
+        10, 10, 0   // bottom right (2)
     ]);  
 
     indexes = [ // anti clockwise
@@ -847,9 +846,9 @@ function buildRoof(x, y, z) {
     // Visible
 
     vertices = new Float32Array([
-        0, 10, 22,   // bottom left (0)
-        5, 14, 22, // top (1)
-        10, 10, 22   // bottom right (2)
+        0, 10, 22,  // bottom left (0)
+        5, 14, 22,  // top (1)
+        10, 10, 22  // bottom right (2)
     ]);  
 
     geometry = new THREE.BufferGeometry();
