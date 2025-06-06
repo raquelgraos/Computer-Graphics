@@ -43,6 +43,8 @@ var helper;
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false, shading = true;
 
+var cameraChanges = 0;
+
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -167,6 +169,13 @@ function createCameras() {
 
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 1000);
 
+    camera.position.set(0, 130, 0);
+    camera.lookAt(scene.position);
+    
+    cameras.push(camera);
+
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 1000);
+
     camera.position.set(80, 45, 80);
     camera.lookAt(scene.position);
 
@@ -282,7 +291,7 @@ function createMaterials() {
 function updateMaterials(type) {
     if (!shading) return;
     if (type != "basic") lastMaterial = type;
-    
+
     // Moon
     moon.getObjectByName("Moon Mesh").material = materials[type].get("moon");
 
@@ -314,7 +323,7 @@ function updateMaterials(type) {
     // Trees 
     corkOaks.forEach(corkOak => {
         corkOak.getObjectByName("Stripped Trunk Mesh").material = materials[type].get("stripped trunk");
-        corkOak.getObjectByName("Trunk Mesh").material = materials[type].get("stripped trunk");
+        corkOak.getObjectByName("Trunk Mesh").material = materials[type].get("trunk");
         corkOak.getObjectByName("Lower Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
         corkOak.getObjectByName("Middle Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
         corkOak.getObjectByName("Upper Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
@@ -1077,6 +1086,10 @@ function init() {
         antialias: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.body.appendChild(VRButton.createButton(renderer));
+    renderer.xr.enabled = true;
+
     document.body.appendChild(renderer.domElement);
 
     createMaterials();
@@ -1093,12 +1106,10 @@ function init() {
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
-
-    update();
-
-    render();
-
-    requestAnimationFrame(animate);
+    renderer.setAnimationLoop(() => {
+        update();
+        renderer.render(scene, camera);
+    });
 }
 
 ////////////////////////////
@@ -1140,7 +1151,8 @@ function onKeyDown(e) {
             setStarSkyTexture();
             break;   
         case 55: // 7
-            camera = cameras[0];
+            cameraChanges++;
+            camera = cameras[cameraChanges % 2];
             break;
         case 69: // e
             updateMaterials("toon");
