@@ -21,8 +21,6 @@ const materials = {
     other: new Map()
 };
 
-const treesPositions = [[-30, -10, -30], [30, -10, -30], [-30, -10, 30], [30, -10, 30]]; //TODO
-
 var geometry, mesh;
 var flowerField;
 var moon, ufo, house;
@@ -425,9 +423,38 @@ function createUFO(x, y, z) {
 
 function populateCorkOaks() {
     const nTrees = 4;
+    const minDistance = 15;
+    const maxAttempts = 100;
+    const placedPositions = [];
+
     for (let i = 0; i < nTrees; i++) {
-        const oak = createCorkOak(treesPositions[i][0], treesPositions[i][1], treesPositions[i][2]);
-        corkOaks.push(oak);
+        let x, z;
+        let attempts = 0;
+        let valid = false;
+
+        while (!valid && attempts < maxAttempts) {
+            x = Math.random() * 60 - 10; // [-10, 50]
+            z = Math.random() * 60 - 30; // [-30, 30]
+            valid = true;
+
+            for (const [px, pz] of placedPositions) {
+                const dx = x - px;
+                const dz = z - pz;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+                if (distance < minDistance) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            attempts++;
+        }
+
+        if (valid) {
+            placedPositions.push([x, z]);
+            const oak = createCorkOak(x, -10, z);
+            corkOaks.push(oak);
+        }
     }
 }
 
