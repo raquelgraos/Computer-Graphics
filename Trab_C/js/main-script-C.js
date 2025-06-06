@@ -40,6 +40,7 @@ var delta;
 var helper;
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false, shading = true;
+let oneKey = false, twoKey = false, eKey = false, pKey = false, qKey = false, rKey = false, wKey = false;
 
 var cameraChanges = 0;
 
@@ -1065,11 +1066,38 @@ function update() {
 
     delta = clock.getDelta();
 
+    handleKeys();
     handleUFOMovement();
     var tentativePos = updateUFOPositions(delta);
 
     ufo.position.x = tentativePos.x;
     ufo.position.z = tentativePos.z;
+}
+
+function handleKeys() {
+    
+    if (oneKey) {
+        setFlowerFieldTexture();
+        oneKey = false;
+    } if (twoKey) {
+        setStarSkyTexture();
+        twoKey = false;
+    } if (eKey) {
+        updateMaterials("toon");
+        eKey = false;
+    } if (pKey) {
+        updatePointlights();
+        pKey = false;
+    } if (qKey) {
+        updateMaterials("lambert");
+        qKey = false;
+    } if (rKey) {
+        toggleShading();
+        rKey = false;
+    } if (wKey) {
+        updateMaterials("phong");
+        wKey = false;
+    }
 }
 
 function handleUFOMovement() {
@@ -1172,32 +1200,32 @@ function onKeyDown(e) {
             downKey = true;
             break;
         case 49: // '1' - Campo floral
-            setFlowerFieldTexture();
+            oneKey = true;
             break;
         case 50: // '2' - Céu estrelado
-            setStarSkyTexture();
+            twoKey = true
             break;   
         case 55: // 7
             cameraChanges++;
             camera = cameras[cameraChanges % 2];
             break;
         case 69: // e
-            updateMaterials("toon");
+            eKey = true;
             break;
         case 81: // q
-            updateMaterials("lambert");
+            qKey = true;
             break;
         case 87: // w
-            updateMaterials("phong");
+            wKey = true;
             break;
         case 68: // d
             globalLight.visible = !globalLight.visible;
             break;
         case 80: // p
-            updatePointlights();
+            pKey = true;
             break;
         case 82: // r
-            toggleShading();
+            rKey = true;
             break;
         case 83: // s
             spotlight.visible = !spotlight.visible;
