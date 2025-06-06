@@ -270,21 +270,21 @@ function createMaterials() {
     materials.toon.set("roof", new THREE.MeshToonMaterial({ color: 0xde5721 }));
 
     // Basic (no light calculations)
-    materials.basic.set("moon", new THREE.MeshToonMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
+    materials.basic.set("moon", new THREE.MeshBasicMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
 
-    materials.basic.set("stripped trunk", new THREE.MeshToonMaterial({ color: 0xa14a0d }));
-    materials.basic.set("trunk", new THREE.MeshToonMaterial({ color: 0x3d1c05 }));
-    materials.basic.set("leaves", new THREE.MeshToonMaterial({ color: 0x1b3d05 }));
+    materials.basic.set("stripped trunk", new THREE.MeshBasicMaterial({ color: 0xa14a0d }));
+    materials.basic.set("trunk", new THREE.MeshBasicMaterial({ color: 0x3d1c05 }));
+    materials.basic.set("leaves", new THREE.MeshBasicMaterial({ color: 0x1b3d05 }));
 
-    materials.basic.set("ufo", new THREE.MeshToonMaterial({ color: 0x666464 }));
-    materials.basic.set("cockpit", new THREE.MeshToonMaterial({ color: 0x808080 }));
-    materials.basic.set("cylinder", new THREE.MeshToonMaterial({ color: 0xf5a958 }));
-    materials.basic.set("light", new THREE.MeshToonMaterial({ color: 0x78f556 }));
+    materials.basic.set("ufo", new THREE.MeshBasicMaterial({ color: 0x666464 }));
+    materials.basic.set("cockpit", new THREE.MeshBasicMaterial({ color: 0x808080 }));
+    materials.basic.set("cylinder", new THREE.MeshBasicMaterial({ color: 0xf5a958 }));
+    materials.basic.set("light", new THREE.MeshBasicMaterial({ color: 0x78f556 }));
     
-    materials.basic.set("walls", new THREE.MeshToonMaterial({ color: 0xffffff }));
-    materials.basic.set("window", new THREE.MeshToonMaterial({ color: 0x358edb }));
-    materials.basic.set("door", new THREE.MeshToonMaterial({ color: 0x358edb }));
-    materials.basic.set("roof", new THREE.MeshToonMaterial({ color: 0xde5721 }));
+    materials.basic.set("walls", new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    materials.basic.set("window", new THREE.MeshBasicMaterial({ color: 0x358edb }));
+    materials.basic.set("door", new THREE.MeshBasicMaterial({ color: 0x358edb }));
+    materials.basic.set("roof", new THREE.MeshBasicMaterial({ color: 0xde5721 }));
 }
 
 function updateMaterials(type) {
