@@ -13,18 +13,27 @@ var renderer;
 var cameras = [];
 var scene, camera;
 
-const materials = new Map();
+const materials = {
+    lambert: new Map(),
+    phong: new Map(),
+    toon: new Map(),
+    basic: new Map(),
+    other: new Map()
+};
 
 const treesPositions = [[-30, -10, -30], [30, -10, -30], [-30, -10, 30], [30, -10, 30]]; //TODO
 
 var geometry, mesh;
 var flowerField;
 var moon, ufo, house;
+const corkOaks = [];
 
 var globalLight = new THREE.DirectionalLight(0xffffff, 1);
 var ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
 var spotlight;
 var pointLights = [];
+
+var lastMaterial = "lambert";
 
 var movementVector = new THREE.Vector3(0, 0, 0)
 const clock = new THREE.Clock();
@@ -32,7 +41,7 @@ var delta;
 
 var helper;
 
-let leftKey = false, upKey = false, rightKey = false, downKey = false;
+let leftKey = false, upKey = false, rightKey = false, downKey = false, shading = true;
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -77,7 +86,7 @@ function createFlowerField(x, y, z) {
     scene.add(flowerField);
 
     // Stores material for texture change (key '1')
-    materials.set("terrain", terrainMaterial);
+    materials.other.set("terrain", terrainMaterial);
 }
 
 function createSkydome() {
@@ -91,7 +100,7 @@ function createSkydome() {
     scene.add(skydome);
 
     // Stores material for texture change (key '2')
-    materials.set("skydome", skyMat);
+    materials.other.set("skydome", skyMat);
 }
 
 //////////////////////
@@ -166,14 +175,14 @@ function createCameras() {
 
 function setFlowerFieldTexture() {
     const flowerTexture = generateFlowerFieldTexture();
-    materials.get("terrain").map = flowerTexture;
-    materials.get("terrain").map.needsUpdate = true;
+    materials.other.get("terrain").map = flowerTexture;
+    materials.other.get("terrain").map.needsUpdate = true;
 }
 
 function setStarSkyTexture() {
     const skyTexture = generateStarSkyTexture();
-    materials.get("skydome").map = skyTexture;
-    materials.get("skydome").map.needsUpdate = true;
+    materials.other.get("skydome").map = skyTexture;
+    materials.other.get("skydome").map.needsUpdate = true;
 }
 
 /////////////////////
@@ -201,27 +210,136 @@ function updatePointlights() {
 ////////////////////////
 
 function createMaterials() {
-    materials.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 })); //white
+    // Lambert materials
+    materials.lambert.set("moon", new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
 
-    materials.set("stripped trunk", new THREE.MeshLambertMaterial({ color: 0xa14a0d })); // orange brown
-    materials.set("trunk", new THREE.MeshLambertMaterial({ color: 0x3d1c05 })); // dark brown
-    materials.set("leaves", new THREE.MeshLambertMaterial({ color: 0x1b3d05 })); // dark green
+    materials.lambert.set("stripped trunk", new THREE.MeshLambertMaterial({ color: 0xa14a0d }));
+    materials.lambert.set("trunk", new THREE.MeshLambertMaterial({ color: 0x3d1c05 }));
+    materials.lambert.set("leaves", new THREE.MeshLambertMaterial({ color: 0x1b3d05 }));
 
-    materials.set("ufo", new THREE.MeshLambertMaterial({ color: 0x666464 })); // dark gray
-    materials.set("cockpit", new THREE.MeshLambertMaterial({ color: 0x808080 }));  // gray
-    materials.set("cylinder", new THREE.MeshLambertMaterial({ color: 0xf5a958 })); // light orange
-    materials.set("light", new THREE.MeshLambertMaterial({ color: 0x78f556 })); // neon green
+    materials.lambert.set("ufo", new THREE.MeshLambertMaterial({ color: 0x666464 }));
+    materials.lambert.set("cockpit", new THREE.MeshLambertMaterial({ color: 0x808080 }));
+    materials.lambert.set("cylinder", new THREE.MeshLambertMaterial({ color: 0xf5a958 }));
+    materials.lambert.set("light", new THREE.MeshLambertMaterial({ color: 0x78f556 }));
 
-    materials.set("walls", new THREE.MeshLambertMaterial({ color: 0xffffff })); //white
-    materials.set("window", new THREE.MeshLambertMaterial({ color: 0x358edb })); // vivid blue
-    materials.set("door", new THREE.MeshLambertMaterial({ color: 0x358edb })); // vivid blue
-    materials.set("roof", new THREE.MeshLambertMaterial({ color: 0xde5721 })); // vivid orange
+    materials.lambert.set("walls", new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    materials.lambert.set("window", new THREE.MeshLambertMaterial({ color: 0x358edb }));
+    materials.lambert.set("door", new THREE.MeshLambertMaterial({ color: 0x358edb }));
+    materials.lambert.set("roof", new THREE.MeshLambertMaterial({ color: 0xde5721 }));
+
+    // Phong materials
+    materials.phong.set("moon", new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
+
+    materials.phong.set("stripped trunk", new THREE.MeshPhongMaterial({ color: 0xa14a0d }));
+    materials.phong.set("trunk", new THREE.MeshPhongMaterial({ color: 0x3d1c05 }));
+    materials.phong.set("leaves", new THREE.MeshPhongMaterial({ color: 0x1b3d05 }));
+
+    materials.phong.set("ufo", new THREE.MeshPhongMaterial({ color: 0x666464 }));
+    materials.phong.set("cockpit", new THREE.MeshPhongMaterial({ color: 0x808080 }));
+    materials.phong.set("cylinder", new THREE.MeshPhongMaterial({ color: 0xf5a958 }));
+    materials.phong.set("light", new THREE.MeshPhongMaterial({ color: 0x78f556 }));
+
+    materials.phong.set("walls", new THREE.MeshPhongMaterial({ color: 0xffffff }));
+    materials.phong.set("window", new THREE.MeshPhongMaterial({ color: 0x358edb }));
+    materials.phong.set("door", new THREE.MeshPhongMaterial({ color: 0x358edb }));
+    materials.phong.set("roof", new THREE.MeshPhongMaterial({ color: 0xde5721 }));
+
+    // Toon materials
+    materials.toon.set("moon", new THREE.MeshToonMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
+
+    materials.toon.set("stripped trunk", new THREE.MeshToonMaterial({ color: 0xa14a0d }));
+    materials.toon.set("trunk", new THREE.MeshToonMaterial({ color: 0x3d1c05 }));
+    materials.toon.set("leaves", new THREE.MeshToonMaterial({ color: 0x1b3d05 }));
+
+    materials.toon.set("ufo", new THREE.MeshToonMaterial({ color: 0x666464 }));
+    materials.toon.set("cockpit", new THREE.MeshToonMaterial({ color: 0x808080 }));
+    materials.toon.set("cylinder", new THREE.MeshToonMaterial({ color: 0xf5a958 }));
+    materials.toon.set("light", new THREE.MeshToonMaterial({ color: 0x78f556 }));
+
+    materials.toon.set("walls", new THREE.MeshToonMaterial({ color: 0xffffff }));
+    materials.toon.set("window", new THREE.MeshToonMaterial({ color: 0x358edb }));
+    materials.toon.set("door", new THREE.MeshToonMaterial({ color: 0x358edb }));
+    materials.toon.set("roof", new THREE.MeshToonMaterial({ color: 0xde5721 }));
+
+    // Basic (no light calculations)
+    materials.basic.set("moon", new THREE.MeshToonMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.8 }));
+
+    materials.basic.set("stripped trunk", new THREE.MeshToonMaterial({ color: 0xa14a0d }));
+    materials.basic.set("trunk", new THREE.MeshToonMaterial({ color: 0x3d1c05 }));
+    materials.basic.set("leaves", new THREE.MeshToonMaterial({ color: 0x1b3d05 }));
+
+    materials.basic.set("ufo", new THREE.MeshToonMaterial({ color: 0x666464 }));
+    materials.basic.set("cockpit", new THREE.MeshToonMaterial({ color: 0x808080 }));
+    materials.basic.set("cylinder", new THREE.MeshToonMaterial({ color: 0xf5a958 }));
+    materials.basic.set("light", new THREE.MeshToonMaterial({ color: 0x78f556 }));
+    
+    materials.basic.set("walls", new THREE.MeshToonMaterial({ color: 0xffffff }));
+    materials.basic.set("window", new THREE.MeshToonMaterial({ color: 0x358edb }));
+    materials.basic.set("door", new THREE.MeshToonMaterial({ color: 0x358edb }));
+    materials.basic.set("roof", new THREE.MeshToonMaterial({ color: 0xde5721 }));
 }
+
+function updateMaterials(type) {
+    if (!shading) return;
+    if (type != "basic") lastMaterial = type;
+    
+    // Moon
+    moon.getObjectByName("Moon Mesh").material = materials[type].get("moon");
+
+    // UFO
+    ufo.getObjectByName("UFO Mesh").material = materials[type].get("ufo");     
+    ufo.getObjectByName("Cockpit Mesh").material = materials[type].get("cockpit"); 
+    ufo.getObjectByName("Cylinder Mesh").material = materials[type].get("cylinder");
+    for (let i = 3; i < 11; i++) {
+        ufo.children[i].material = materials[type].get("light");
+    } // UFO lights (children 3 to 10 (8 lights))
+
+    // House 
+    house.getObjectByName("Front Wall").children.forEach(child => {
+        child.material = materials[type].get("walls");
+    }); 
+    house.getObjectByName("Back Wall").getObjectByName("Mesh").material = materials[type].get("walls");
+    house.getObjectByName("Close Side Wall").children.forEach(child => {
+        if (child.isMesh) child.material = materials[type].get("walls");
+    });
+    house.getObjectByName("Far Side Wall").getObjectByName("Mesh").material = materials[type].get("walls");
+    house.getObjectByName("Side Window").getObjectByName("Mesh").material = materials[type].get("window");
+    house.getObjectByName("Front Windows").getObjectByName("Front Window1 Mesh").material = materials[type].get("window");
+    house.getObjectByName("Front Windows").getObjectByName("Front Window2 Mesh").material = materials[type].get("window");
+    house.getObjectByName("Door").getObjectByName("Mesh").material = materials[type].get("door");
+    house.getObjectByName("Roof").children.forEach(child => {
+        if (child.isMesh) child.material = materials[type].get("roof");
+    });
+
+    // Trees 
+    corkOaks.forEach(corkOak => {
+        corkOak.getObjectByName("Stripped Trunk Mesh").material = materials[type].get("stripped trunk");
+        corkOak.getObjectByName("Trunk Mesh").material = materials[type].get("stripped trunk");
+        corkOak.getObjectByName("Lower Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
+        corkOak.getObjectByName("Middle Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
+        corkOak.getObjectByName("Upper Branch").getObjectByName("Mesh").material = materials[type].get("trunk");
+        corkOak.getObjectByName("Lower Leaves").getObjectByName("Mesh").material = materials[type].get("leaves");
+        corkOak.getObjectByName("Middle Leaves").getObjectByName("Mesh").material = materials[type].get("leaves");
+        corkOak.getObjectByName("Upper Leaves").getObjectByName("Mesh").material = materials[type].get("leaves");
+    });
+}
+
+function toggleShading(){
+    if (shading){
+        updateMaterials("basic");
+        shading = false;
+    } else {
+        shading = true;
+        updateMaterials(lastMaterial);
+    }
+}
+
 
 function createMoon(x, y, z) {
 
     geometry = new THREE.SphereGeometry(3, 64, 32);
-    mesh = new THREE.Mesh(geometry, materials.get("moon"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("moon"));
+    mesh.name = "Moon Mesh";
 
     moon = new THREE.Object3D();
     moon.add(mesh);
@@ -236,7 +354,7 @@ function addLights() {
     for (let i = 0; i < nLights; i++) {
 
         geometry = new THREE.SphereGeometry(0.20);
-        mesh = new THREE.Mesh(geometry, materials.get("light"));
+        mesh = new THREE.Mesh(geometry, materials.lambert.get("light"));
         mesh.position.set(2.5, -0.2, 0);
         mesh.rotation.x = Math.PI;
 
@@ -260,23 +378,26 @@ function createUFO(x, y, z) {
 
     // body
     geometry = new THREE.SphereGeometry(3, 25, 50);
-    mesh = new THREE.Mesh(geometry, materials.get("ufo"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("ufo"));
     mesh.position.set(0, 0, 0);
     mesh.scale.set(1, 0.2, 1);
+    mesh.name = "UFO Mesh";
 
     ufo.add(mesh);
 
     // cockpit
     geometry = new THREE.SphereGeometry(1, 25, 50);
-    mesh = new THREE.Mesh(geometry, materials.get("cockpit"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("cockpit"));
     mesh.position.set(0, 0.5, 0);
+    mesh.name = "Cockpit Mesh";
 
     ufo.add(mesh);
 
     // cylinder
     geometry = new THREE.CylinderGeometry(1, 1, 0.2, 50);
-    mesh = new THREE.Mesh(geometry, materials.get("cylinder"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("cylinder"));
     mesh.position.set(0, -0.5, 0);
+    mesh.name = "Cylinder Mesh";
 
     spotlight = new THREE.SpotLight(0xffffff, 2, 100, Math.PI/8, 0, 0);
     spotlight.position.set(0, -0.5, 0);
@@ -293,29 +414,32 @@ function createUFO(x, y, z) {
     scene.add(ufo);
 }
 
-function populateCorkOaks() { 
+function populateCorkOaks() {
     const nTrees = 4;
     for (let i = 0; i < nTrees; i++) {
-        createCorkOak(treesPositions[i][0], treesPositions[i][1], treesPositions[i][2]);
+        const oak = createCorkOak(treesPositions[i][0], treesPositions[i][1], treesPositions[i][2]);
+        corkOaks.push(oak);
     }
 }
 
 function createCorkOak(x, y, z) {
-    var corkOak = new THREE.Object3D();
+    const corkOak = new THREE.Object3D();
 
     // stripped trunk
     var strippedHeight = THREE.MathUtils.randFloat(4, 6.5);
     geometry = new THREE.CylinderGeometry(0.9, 0.9, strippedHeight);
-    mesh = new THREE.Mesh(geometry, materials.get("stripped trunk"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("stripped trunk"));
+    mesh.name = "Stripped Trunk Mesh";
 
     corkOak.add(mesh);
 
     // trunk
     var trunkHeight = strippedHeight * 1.5;
     geometry = new THREE.CylinderGeometry(1, 1, trunkHeight);
-    mesh = new THREE.Mesh(geometry, materials.get("trunk"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("trunk"));
     mesh.position.set(0, strippedHeight/2 + trunkHeight/2, 0)
-    
+    mesh.name = "Trunk Mesh";
+
     corkOak.add(mesh);
 
     corkOak.rotation.z = Math.PI/12;
@@ -326,17 +450,21 @@ function createCorkOak(x, y, z) {
 
     corkOak.position.set(x, y, z);
     scene.add(corkOak);
+
+    return corkOak;
 }
 
 function addBranches(obj, h) {
     // lower branch
     var lowerBranch = new THREE.Object3D();
+    lowerBranch.name = "Lower Branch";
     createBranch(lowerBranch);
 
     lowerBranch.position.set(-(Math.cos(Math.PI/4) * 2.5), h, 0); // branch distance from tree = cos pi/4 * branch height/2
     lowerBranch.rotation.z = Math.PI/4;
 
     var lowerLeaves = new THREE.Object3D();
+    lowerLeaves.name = "Lower Leaves";
     createLeaves(lowerLeaves);
 
     lowerLeaves.rotation.z = -Math.PI/4;
@@ -347,12 +475,14 @@ function addBranches(obj, h) {
 
     // middle branch
     var middleBranch = new THREE.Object3D();
+    middleBranch.name = "Middle Branch";
     createBranch(middleBranch);
 
     middleBranch.position.set(Math.cos(Math.PI/4) *2.5, 3*h/2, 0);
     middleBranch.rotation.z = -Math.PI/4;
 
     var middleLeaves = new THREE.Object3D();
+    middleLeaves.name = "Middle Leaves";
     createLeaves(middleLeaves);
 
     middleLeaves.rotation.z = Math.PI/4;
@@ -363,12 +493,14 @@ function addBranches(obj, h) {
 
     // upper branch
     var upperBranch = new THREE.Object3D();
+    upperBranch.name = "Upper Branch";
     createBranch(upperBranch);
 
     upperBranch.position.set(Math.cos(Math.PI/4) * 2.5, 2*h + 1.5, 0);
     upperBranch.rotation.z = -Math.PI/4;
 
     var upperLeaves = new THREE.Object3D();
+    upperLeaves.name = "Upper Leaves";
     createLeaves(upperLeaves);
     geometry.scale(2, 3, 2);                // upper Leaves are bigger
     upperLeaves.position.set(0, 4, 0)
@@ -381,14 +513,16 @@ function addBranches(obj, h) {
 
 function createBranch(obj) {
     geometry = new THREE.CylinderGeometry(0.5, 0.5, 5);
-    mesh = new THREE.Mesh(geometry, materials.get("trunk"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("trunk"));
+    mesh.name = "Mesh";
     obj.add(mesh);
 }
 
 function createLeaves(obj){
     geometry = new THREE.SphereGeometry(1.25, 32, 32);
     geometry.scale(2, 1, 3);
-    mesh = new THREE.Mesh(geometry, materials.get("leaves"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("leaves"));
+    mesh.name = "Mesh";
     obj.add(mesh);
     obj.position.set(0, 2.5, 0);
 }
@@ -413,6 +547,7 @@ function buildSideWalls(x, y, z) {
     // Visible
 
     var wall = new THREE.Group();
+    wall.name = "Close Side Wall";
 
     var vertices = new Float32Array([
         0, 0, 0,  // bottom left (0)
@@ -431,7 +566,7 @@ function buildSideWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -446,7 +581,7 @@ function buildSideWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -461,7 +596,7 @@ function buildSideWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -476,7 +611,7 @@ function buildSideWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     wall.position.set(x, y, z);
@@ -485,6 +620,7 @@ function buildSideWalls(x, y, z) {
     // Not visible
 
     wall = new THREE.Group();
+    wall.name = "Far Side Wall";
 
     vertices = new Float32Array([
         0, 0, 0,
@@ -498,7 +634,8 @@ function buildSideWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();    
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
+    mesh.name = "Mesh";
     wall.add(mesh);
 
     wall.position.set(x, y, z - 11);
@@ -510,6 +647,7 @@ function buildFrontAndBackWalls(x, y, z) {
     // Visible
 
     var wall = new THREE.Group();
+    wall.name = "Front Wall";
 
     var vertices = new Float32Array([
         0, 0, 0,    // bottom right (0)
@@ -528,7 +666,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -543,7 +681,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -558,7 +696,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -573,7 +711,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -588,7 +726,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -603,7 +741,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -618,7 +756,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -633,7 +771,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     vertices = new Float32Array([
@@ -648,7 +786,7 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
     wall.add(mesh);
 
     wall.position.set(x, y, z);
@@ -657,6 +795,7 @@ function buildFrontAndBackWalls(x, y, z) {
     // Not visible
 
     wall = new THREE.Group();
+    wall.name = "Back Wall";
 
     vertices = new Float32Array([
         0, 0, 0,
@@ -670,7 +809,8 @@ function buildFrontAndBackWalls(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("walls"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("walls"));
+    mesh.name = "Mesh";
     wall.add(mesh);
 
     wall.position.set(x - 10, y, z);
@@ -682,6 +822,7 @@ function buildWindowsAndDoor(x, y, z) {
     // Side window
 
     var window = new THREE.Group();
+    window.name = "Side Window";
 
     var vertices = new Float32Array([
         4, 4, 0, // bottom left (0)
@@ -700,7 +841,8 @@ function buildWindowsAndDoor(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("window"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("window"));
+    mesh.name = "Mesh";
     window.add(mesh);
 
     window.position.set(x - 10, y, z + 22);
@@ -709,6 +851,8 @@ function buildWindowsAndDoor(x, y, z) {
     // Front windows
 
     window = new THREE.Group();
+    window.name = "Front Windows";
+
 
     vertices = new Float32Array([
         0, 4, 4, // bottom right (0)
@@ -727,7 +871,8 @@ function buildWindowsAndDoor(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("window"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("window"));
+    mesh.name = "Front Window1 Mesh";
     window.add(mesh);
 
     window.position.set(x, y, z);
@@ -749,7 +894,8 @@ function buildWindowsAndDoor(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("window"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("window"));
+    mesh.name = "Front Window2 Mesh";
     window.add(mesh);
 
     window.position.set(x, y, z);
@@ -759,6 +905,7 @@ function buildWindowsAndDoor(x, y, z) {
     // Front door
 
     var door = new THREE.Group();
+    door.name = "Door";
 
     vertices = new Float32Array([
         0, 0, 10, // bottom right (0)
@@ -772,7 +919,8 @@ function buildWindowsAndDoor(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("door"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("door"));
+    mesh.name = "Mesh";
     door.add(mesh);
 
     door.position.set(x, y, z);
@@ -784,6 +932,7 @@ function buildWindowsAndDoor(x, y, z) {
 function buildRoof(x, y, z) {
 
     var roof = new THREE.Group();
+    roof.name = "Roof";
 
     // Not visible 
     var vertices = new Float32Array([
@@ -803,7 +952,7 @@ function buildRoof(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("roof"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("roof"));
     roof.add(mesh);
 
     // Visible
@@ -820,7 +969,7 @@ function buildRoof(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("roof"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("roof"));
     roof.add(mesh);
 
     // Not visible
@@ -840,7 +989,7 @@ function buildRoof(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("roof"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("roof"));
     roof.add(mesh);
 
     // Visible
@@ -856,7 +1005,7 @@ function buildRoof(x, y, z) {
     geometry.setIndex(indexes);
     geometry.computeVertexNormals();
 
-    mesh = new THREE.Mesh(geometry, materials.get("roof"));
+    mesh = new THREE.Mesh(geometry, materials.lambert.get("roof"));
     roof.add(mesh);
 
     roof.position.set(x, y, z);
@@ -994,10 +1143,13 @@ function onKeyDown(e) {
             camera = cameras[0];
             break;
         case 69: // e
+            updateMaterials("toon");
             break;
         case 81: // q
+            updateMaterials("lambert");
             break;
         case 87: // w
+            updateMaterials("phong");
             break;
         case 68: // d
             globalLight.visible = !globalLight.visible;
@@ -1006,6 +1158,7 @@ function onKeyDown(e) {
             updatePointlights();
             break;
         case 82: // r
+            toggleShading();
             break;
         case 83: // s
             spotlight.visible = !spotlight.visible;
