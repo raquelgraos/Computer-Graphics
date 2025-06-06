@@ -40,7 +40,7 @@ var delta;
 var helper;
 
 let leftKey = false, upKey = false, rightKey = false, downKey = false, shading = true;
-let oneKey = false, twoKey = false, eKey = false, pKey = false, qKey = false, rKey = false, wKey = false;
+let oneKey = false, twoKey = false, eKey = false, pKey = false, qKey = false, rKey = false, wKey = false, sevenKey = false;
 
 var cameraChanges = 0;
 
@@ -1097,7 +1097,11 @@ function handleKeys() {
     } if (wKey) {
         updateMaterials("phong");
         wKey = false;
-    }
+    } if (sevenKey){
+        cameraChanges++;
+        camera = cameras[cameraChanges % 2];
+        sevenKey = false;
+    } 
 }
 
 function handleUFOMovement() {
@@ -1206,8 +1210,7 @@ function onKeyDown(e) {
             twoKey = true
             break;   
         case 55: // 7
-            cameraChanges++;
-            camera = cameras[cameraChanges % 2];
+            sevenKey = true
             break;
         case 69: // e
             eKey = true;
